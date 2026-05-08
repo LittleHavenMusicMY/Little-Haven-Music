@@ -303,7 +303,7 @@
     </section>
 
     <footer class="py-12 text-center text-slate-400 text-xs font-bold uppercase tracking-[0.2em]">
-        <p>Little Haven Music Studio (003685629-H)</p>
+        <p>© 2026 Little Haven Music Studio (003685629-H)</p>
     </footer>
 
     <script type="module">
@@ -312,7 +312,7 @@
         import { getFirestore, doc, getDoc, setDoc, onSnapshot, collection, addDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
         const apiKey = "";
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'little-haven';
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'little-haven-v1';
         
         let db, auth;
         let isFirebaseActive = false;
@@ -338,14 +338,12 @@
             ]
         };
 
-        // SAFETY: Fail-safe if Firebase takes too long or fails
         const safetyTimer = setTimeout(() => {
             if (document.getElementById('loading').style.display !== 'none') {
-                console.warn("Firebase taking too long - falling back to default content.");
                 render();
                 document.getElementById('loading').style.display = 'none';
             }
-        }, 3000);
+        }, 4000);
 
         try {
             if (typeof __firebase_config !== 'undefined') {
@@ -354,6 +352,15 @@
                 auth = getAuth(app);
                 db = getFirestore(app);
                 isFirebaseActive = true;
+
+                const initAuth = async () => {
+                    if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                        await signInWithCustomToken(auth, __initial_auth_token);
+                    } else {
+                        await signInAnonymously(auth);
+                    }
+                };
+                initAuth();
 
                 onAuthStateChanged(auth, async (user) => {
                     if (user) {
@@ -368,23 +375,15 @@
                             render();
                             document.getElementById('loading').style.display = 'none';
                         }, (err) => {
-                            console.error("Firestore sync error:", err);
                             render();
                             document.getElementById('loading').style.display = 'none';
                         });
-                    } else {
-                        if (typeof __initial_auth_token !== 'undefined') {
-                            await signInWithCustomToken(auth, __initial_auth_token);
-                        } else {
-                            await signInAnonymously(auth);
-                        }
                     }
                 });
             } else {
                 throw new Error("No config");
             }
         } catch (e) {
-            console.warn("Firebase not available:", e.message);
             render();
             document.getElementById('loading').style.display = 'none';
         }
@@ -405,7 +404,7 @@
                     return data.candidates?.[0]?.content?.parts?.[0]?.text;
                 } catch (e) {
                     retries++;
-                    await new Promise(r => setTimeout(r, Math.pow(2, retries) * 500));
+                    await new Promise(r => setTimeout(r, Math.pow(2, retries) * 1000));
                 }
             }
         }
@@ -426,7 +425,7 @@
             area.classList.remove('hidden');
             area.innerHTML = "<span class='loading-dots'>Thinking</span>";
             try {
-                const res = await callGemini(q, "You are Sabrina's Assistant at Little Haven Music. Be helpful and warm.");
+                const res = await callGemini(q, "You are Sabrina's Assistant at Little Haven Music. Be helpful, concise and warm.");
                 area.innerHTML = `<strong>✨ Assistant:</strong> ${res}`;
             } catch { area.innerHTML = "Error connecting."; }
             finally { btn.innerText = "Ask ✨"; }
@@ -438,8 +437,10 @@
             const btn = document.getElementById('gen-path-btn');
             btn.innerHTML = "<span class='loading-dots'>Mapping Path</span>";
             try {
-                const res = await callGemini(`4-week learning path for ${type}`, "You are Sabrina Chai, expert piano teacher. Bullet points.");
+                const res = await callGemini(`Generate a 4-week sample learning path for ${type}.`, "You are Sabrina Chai, a warm and professional piano teacher. Use bullet points.");
                 resArea.innerHTML = `<div class='p-4 bg-indigo-50 rounded-2xl'>${res.replace(/\n/g, '<br>')}</div>`;
+            } catch {
+                 resArea.innerHTML = "<div class='p-4 bg-rose-50 text-rose-500 rounded-2xl'>Could not generate path. Please try again.</div>";
             } finally { btn.innerText = "Generate Sample Path ✨"; }
         };
 
@@ -448,7 +449,7 @@
             const btn = document.getElementById('polish-btn');
             if(!msg.value) return;
             btn.innerText = "✨ Polishing...";
-            const res = await callGemini(msg.value, "Polish this inquiry to be professional and warm.");
+            const res = await callGemini(msg.value, "Polish this inquiry to be professional and warm while keeping the core meaning.");
             msg.value = res.trim();
             btn.innerText = "Polish Draft ✨";
         };
@@ -470,7 +471,7 @@
 
             document.getElementById('lessons-container').innerHTML = (siteData.lessons || []).map(l => `
                 <div class="bg-white p-8 rounded-[3rem] border border-slate-100 shadow-sm card-hover">
-                    <span class="px-4 py-1 text-[10px] font-bold uppercase bg-${l.color}-50 text-${l.color}-500 rounded-full mb-4 inline-block">${l.tag}</span>
+                    <span class="px-4 py-1 text-[10px] font-bold uppercase bg-slate-50 text-slate-500 rounded-full mb-4 inline-block">${l.tag}</span>
                     <h3 class="text-xl font-bold text-slate-800 mb-3">${l.title}</h3>
                     <p class="text-sm text-slate-500">${l.desc}</p>
                 </div>
@@ -486,10 +487,7 @@
 
         window.submitTestimonial = async (e) => {
             e.preventDefault();
-            if(!isFirebaseActive) {
-                alert("Database connection is currently offline. Please try again in a moment.");
-                return;
-            }
+            if(!isFirebaseActive || !auth.currentUser) return;
             const btn = document.getElementById('test-submit-btn');
             btn.innerText = "Submitting...";
             try {
@@ -499,22 +497,20 @@
                     at: new Date(),
                     status: 'pending'
                 });
-                alert("Thank you! Your review has been submitted for moderation. ✨");
-                e.target.reset();
+                document.getElementById('testimonial-form').reset();
                 toggleTestimonialForm();
+                btn.innerText = "Sent! ✨";
+                setTimeout(() => btn.innerText = "Submit Review ✨", 3000);
             } catch (err) {
-                console.error(err);
-                alert("Error submitting. Please try again.");
-            } finally { btn.innerText = "Submit Review ✨"; }
+                btn.innerText = "Error. Try again.";
+            }
         };
 
         window.handleInquiry = async (e) => {
             e.preventDefault();
-            if(!isFirebaseActive) {
-                alert("Inquiry system is currently offline. Please contact via WhatsApp.");
-                return;
-            }
+            if(!isFirebaseActive || !auth.currentUser) return;
             const btn = e.target.querySelector('button[type="submit"]');
+            const originalText = btn.innerText;
             btn.innerText = "Sending...";
             try {
                 await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'inquiries'), {
@@ -525,11 +521,12 @@
                     message: document.getElementById('inq-msg').value,
                     at: new Date()
                 });
-                alert("Your inquiry has been sent! We will contact you shortly. ✨");
                 e.target.reset();
+                btn.innerText = "Inquiry Sent! ✨";
+                setTimeout(() => btn.innerText = originalText, 3000);
             } catch (err) {
-                alert("Error sending. Please message +60 17-651 6750 instead.");
-            } finally { btn.innerText = "Send Inquiry"; }
+                btn.innerText = "Error. Try WhatsApp.";
+            }
         };
     </script>
 </body>
