@@ -4,13 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
-    <!-- Primary SEO Meta Tags -->
     <title>Little Haven Music | Premium Piano & Theory Lessons</title>
     <meta name="description" content="Premium in-home and online music education. Expert piano and theory instruction specializing in ABRSM Distinction results across Rawang, Bandar Utama, and PJ.">
-    <meta name="keywords" content="Little Haven Music, piano teacher Rawang, online piano teacher Malaysia, music theory lessons PJ, piano teacher Bandar Utama, ABRSM piano prep, Anggun City piano">
     
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300;500;700&family=Playfair+Display:ital,wght@0,700;1,700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300;500;700&family=Playfair+Display:ital,wght@0,700;1,700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
     
     <style>
         body {
@@ -21,16 +19,25 @@
             font-family: 'Playfair Display', serif;
         }
         
-        /* New Colorful Pastel Palette */
-        .pastel-pink { background-color: #fff0f3; }
-        .pastel-blue { background-color: #e0f2fe; }
-        .pastel-purple { background-color: #f3e8ff; }
-        .pastel-yellow { background-color: #fefce8; }
-        .pastel-mint { background-color: #ecfdf5; }
-        .pastel-peach { background-color: #fff7ed; }
+        .testimonial-quote {
+            font-family: 'Inter', sans-serif;
+            font-weight: 300;
+            line-height: 1.8;
+            letter-spacing: 0.01em;
+        }
+        .testimonial-author {
+            font-family: 'Quicksand', sans-serif;
+            letter-spacing: 0.05em;
+        }
+        
+        .pastel-pink { background-color: #fff1f2; }
+        .pastel-blue { background-color: #f0f9ff; }
+        .pastel-purple { background-color: #faf5ff; }
+        .pastel-mint { background-color: #f0fdf4; }
+        .pastel-peach { background-color: #fffaf5; }
         
         .hero-gradient {
-            background: linear-gradient(135deg, #fff0f3 0%, #f3e8ff 33%, #e0f2fe 66%, #ecfdf5 100%);
+            background: linear-gradient(135deg, #fff1f2 0%, #faf5ff 33%, #f0f9ff 66%, #f0fdf4 100%);
         }
         
         .card-hover {
@@ -38,7 +45,7 @@
         }
         .card-hover:hover {
             transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
         }
 
         .img-container {
@@ -48,406 +55,294 @@
             box-shadow: 0 20px 40px rgba(0,0,0,0.1);
         }
 
-        ::-webkit-scrollbar { width: 8px; }
-        ::-webkit-scrollbar-track { background: #f1f1f1; }
-        ::-webkit-scrollbar-thumb { background: #d1d1d1; border-radius: 10px; }
-
-        .star-rating button {
-            transition: color 0.2s ease;
-        }
-
-        /* Custom Logo Animation */
-        .logo-piano {
-            transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-        }
-        .logo-group:hover .logo-piano {
-            transform: translateY(-2px) scale(1.1);
-        }
-
-        @keyframes shimmer {
-            0% { opacity: 0.8; }
-            50% { opacity: 1; }
-            100% { opacity: 0.8; }
-        }
-        .animate-shimmer {
-            animation: shimmer 2s infinite ease-in-out;
-        }
-
-        /* Floating decoration elements */
         .blob {
             position: absolute;
             z-index: -1;
-            filter: blur(40px);
-            opacity: 0.4;
+            filter: blur(50px);
+            opacity: 0.5;
             border-radius: 50%;
+            animation: pulse 10s infinite alternate ease-in-out;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1) translate(0, 0); }
+            100% { transform: scale(1.1) translate(20px, 20px); }
+        }
+
+        .admin-edit {
+            outline: 2px dashed #fb7185;
+            outline-offset: 4px;
+            cursor: pointer;
         }
     </style>
 </head>
 <body class="text-slate-700">
 
-    <!-- Promo Banner - Multi-pastel -->
-    <div class="bg-gradient-to-r from-purple-500 via-pink-500 to-blue-500 text-white py-2.5 px-4 text-center text-sm font-medium tracking-wide animate-shimmer">
-        <span class="inline-flex items-center gap-2">
-            ✨ Join our <span class="text-yellow-200 font-bold uppercase tracking-tighter">FREE TRIAL</span> class today! 
-            <span class="text-[10px] opacity-80 italic font-normal ml-1">| *T&C Apply</span>
-        </span>
+    <div id="loading" class="fixed inset-0 bg-white z-[100] flex items-center justify-center font-bold text-slate-400">
+        Loading Studio...
+    </div>
+
+    <!-- Promo Banner -->
+    <div class="bg-gradient-to-r from-rose-400 via-fuchsia-400 to-indigo-400 text-white py-2 px-4 text-center text-sm font-bold tracking-wide">
+        ✨ Join our <span class="underline decoration-2 underline-offset-4">FREE TRIAL</span> class today! 
     </div>
 
     <!-- Navigation -->
-    <nav class="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-purple-100">
-        <div class="max-w-6xl mx-auto px-6 py-3 flex justify-between items-center">
-            <!-- Logo (Untouched as requested) -->
-            <a href="#home" class="flex items-center gap-4 group logo-group">
-                <div class="relative w-12 h-12 flex items-center justify-center bg-pink-50 rounded-xl logo-piano shadow-inner">
-                    <svg viewBox="0 0 100 100" class="w-10 h-10 text-pink-400" fill="currentColor">
-                        <path d="M15 25 C 15 10, 85 10, 85 25 L 85 75 C 85 90, 50 90, 50 75 L 50 45 C 50 30, 15 30, 15 45 Z" opacity="0.15"/>
+    <nav class="sticky top-0 z-50 bg-white/80 backdrop-blur-lg border-b border-purple-100">
+        <div class="max-w-6xl mx-auto px-6 py-4 flex justify-between items-center">
+            <a href="#home" class="flex items-center gap-4 group">
+                <div class="relative w-10 h-10 flex items-center justify-center bg-pink-50 rounded-xl shadow-inner">
+                    <svg viewBox="0 0 100 100" class="w-8 h-8 text-pink-400" fill="currentColor">
                         <path d="M20 30 L 80 30 L 80 72 C 80 85, 45 85, 45 72 L 45 52 L 20 52 Z" />
-                        <path d="M62 38 A 6 6 0 0 1 74 38 A 6 6 0 0 1 86 38 Q 86 52 74 64 Q 62 52 62 38" class="text-pink-300"/>
-                        <rect x="20" y="44" width="30" height="8" fill="white" rx="1"/>
-                        <rect x="24" y="44" width="3" height="5" fill="black"/>
-                        <rect x="31" y="44" width="3" height="5" fill="black"/>
-                        <rect x="38" y="44" width="3" height="5" fill="black"/>
-                        <rect x="45" y="44" width="3" height="5" fill="black"/>
                     </svg>
                 </div>
-                <div class="flex flex-col -space-y-1.5">
-                    <span class="text-xl font-bold text-slate-800 tracking-tight">Little Haven</span>
-                    <span class="text-[11px] uppercase tracking-[0.25em] font-bold text-pink-400">Music Studio</span>
+                <div class="flex flex-col -space-y-1">
+                    <span class="text-lg font-bold text-slate-800">Little Haven</span>
+                    <span class="text-[8px] uppercase tracking-[0.3em] font-bold text-pink-400">Music Studio</span>
                 </div>
             </a>
 
-            <div class="hidden md:flex gap-8 font-medium text-slate-500 text-sm">
-                <a href="#home" class="hover:text-purple-500 transition">Home</a>
-                <a href="#lessons" class="hover:text-mint-600 transition text-emerald-600/70">Lessons</a>
-                <a href="#areas" class="hover:text-blue-500 transition">Service Areas</a>
-                <a href="#contact" class="px-5 py-2.5 bg-gradient-to-r from-pink-400 to-purple-400 text-white rounded-full hover:shadow-lg transition shadow-sm">Contact Us</a>
+            <div class="hidden md:flex gap-8 font-bold text-slate-500 text-sm">
+                <a href="#home" class="hover:text-pink-500 transition">Home</a>
+                <a href="#lessons" class="hover:text-emerald-500 transition">Lessons</a>
+                <a href="#teachers" class="hover:text-purple-500 transition">Teachers</a>
+                <a href="#contact" class="px-6 py-2 bg-gradient-to-r from-pink-400 to-purple-400 text-white rounded-full">Contact</a>
             </div>
         </div>
     </nav>
 
-    <!-- Hero Section with Multi-color Blobs -->
+    <!-- Hero Section -->
     <section id="home" class="hero-gradient py-20 px-6 relative overflow-hidden">
-        <div class="blob w-64 h-64 bg-yellow-200 -top-10 -left-10"></div>
-        <div class="blob w-80 h-80 bg-blue-200 -bottom-20 right-10"></div>
-        
+        <div class="blob w-96 h-96 bg-yellow-200/50 -top-20 -left-20"></div>
         <div class="max-w-6xl mx-auto flex flex-col md:flex-row items-center gap-12 relative z-10">
             <div class="flex-1 text-center md:text-left">
-                <h1 class="text-5xl md:text-6xl font-bold text-slate-800 mb-6 leading-tight">
-                    Personalized Music <br>
-                    <span class="bg-clip-text text-transparent bg-gradient-to-r from-pink-500 via-purple-500 to-blue-500 italic">
-                        In Your Home or Online
-                    </span>
+                <h1 id="hero-title" class="text-5xl md:text-7xl font-bold text-slate-800 mb-6 leading-tight">
+                    Where Every Note <br>
+                    <span class="text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-blue-500 italic">Finds a Home.</span>
                 </h1>
-                <div class="text-lg text-slate-600 mb-8 max-w-lg">
-                    <p class="mb-4">
-                        Guided by <strong>Sabrina Chai</strong>, a dedicated educator specializing in piano artistry and music theory. Serving <strong>Rawang, Bandar Utama, and PJ</strong>.
-                    </p>
-                    <!-- Social Icons -->
-                    <div class="flex items-center justify-center md:justify-start gap-4">
-                        <a href="https://www.facebook.com/share/1F3RYMJTX8/?mibextid=wwXIfr" target="_blank" class="w-10 h-10 flex items-center justify-center bg-white/80 rounded-full shadow-sm hover:scale-110 transition text-[#1877F2]">
-                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                                <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
-                            </svg>
-                        </a>
-                        <a href="https://www.instagram.com/little_haven_music?igsh=M3VsaG40YTBoejBs&utm_source=qr" target="_blank" class="w-10 h-10 flex items-center justify-center bg-white/80 rounded-full shadow-sm hover:scale-110 transition text-[#E4405F]">
-                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                                <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
-                            </svg>
-                        </a>
-                    </div>
-                </div>
-                <div class="flex flex-wrap gap-4 justify-center md:justify-start">
-                    <a href="https://calendar.app.google/eFDtbf8qrnRktBrB9" target="_blank" class="px-8 py-4 bg-gradient-to-r from-purple-400 to-indigo-400 text-white rounded-full font-bold shadow-lg hover:scale-105 transition inline-flex items-center gap-2">
-                        Check Availability ✨
-                    </a>
-                    <a href="#contact" class="px-8 py-4 bg-white/90 text-slate-600 rounded-full font-bold border border-white shadow-sm hover:bg-white transition">Contact Us</a>
-                </div>
-            </div>
-            <div class="flex-1 relative">
-                <div class="w-full h-[450px] bg-white rounded-[3rem] overflow-hidden shadow-2xl rotate-2 relative border-8 border-white/50 backdrop-blur-sm">
-                    <img src="https://images.unsplash.com/photo-1514119412350-e174d90d280e?auto=format&fit=crop&q=80&w=800"
-                         alt="Little Haven Music Studio" class="w-full h-full object-cover object-top">
-                </div>
-                <!-- Colorful accents -->
-                <div class="absolute -bottom-6 -left-6 w-24 h-24 bg-yellow-300 rounded-full blur-2xl opacity-40"></div>
-                <div class="absolute -top-6 -right-6 w-24 h-24 bg-pink-300 rounded-full blur-2xl opacity-40"></div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Studio Philosophy Section - Mint/Emerald focus -->
-    <section id="about" class="py-24 px-6 bg-white overflow-hidden relative">
-        <div class="max-w-6xl mx-auto">
-            <div class="flex flex-col md:flex-row items-center gap-16">
-                <div class="flex-1 relative">
-                    <div class="w-72 h-[450px] md:w-96 md:h-[550px] img-container rotate-[-2deg] border-8 border-white bg-slate-100">
-                         <img src="https://images.unsplash.com/photo-1552422535-c45813c61732?auto=format&fit=crop&q=80&w=800" 
-                              alt="Our Music Studio" class="w-full h-full object-cover object-top">
-                    </div>
-                    <div class="absolute -bottom-6 -right-6 w-full h-full bg-emerald-50 rounded-[3.5rem] -z-10"></div>
-                </div>
-                
-                <div class="flex-1 text-center md:text-left">
-                    <h2 class="text-4xl font-bold text-slate-800 mb-2">Our Philosophy</h2>
-                    <h3 class="text-emerald-500 font-bold text-xl mb-6">Excellence in Music Education</h3>
-                    <p class="text-lg text-slate-600 mb-6 leading-relaxed">
-                        At Little Haven Music, we have nurtured over <strong>50 students</strong>, building strong musical foundations from the ground up. Our students consistently achieve <strong>Gold Awards</strong> in prestigious international and local festivals.
-                    </p>
-                    
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-8 text-left">
-                        <div class="flex items-start gap-3 p-4 bg-amber-50/50 rounded-2xl border border-amber-100">
-                            <span class="text-2xl">🎓</span>
-                            <div>
-                                <h4 class="font-bold text-slate-800 text-sm uppercase tracking-wider">Academic Rigor</h4>
-                                <p class="text-slate-500 text-xs mt-1">Professional Standards<br>Research-driven methodology</p>
-                            </div>
-                        </div>
-                        <div class="flex items-start gap-3 p-4 bg-sky-50/50 rounded-2xl border border-sky-100">
-                            <span class="text-2xl">🎹</span>
-                            <div>
-                                <h4 class="font-bold text-slate-800 text-sm uppercase tracking-wider">Expertise</h4>
-                                <p class="text-slate-500 text-xs mt-1">ABRSM Distinction Track<br>Comprehensive Theory Training</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="flex flex-col gap-4">
-                        <div class="p-6 bg-gradient-to-br from-purple-50 to-pink-50 rounded-2xl border-l-4 border-purple-300 text-left">
-                            <p class="text-purple-700 italic font-medium leading-relaxed">
-                                "Our mission is to nurture each student's unique musical voice by providing a safe, encouraging space to learn and perform."
-                            </p>
-                        </div>
-                        <div class="flex items-center gap-4 text-slate-400 text-sm px-2">
-                             <span class="font-bold text-emerald-600 italic">Global Connections</span>
-                             <span>•</span>
-                             <span>International Music Festivals 2025</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Testimonials Section - Sunset/Peach focus -->
-    <section id="testimonials" class="py-16 px-6 bg-orange-50/50">
-        <div class="max-w-4xl mx-auto">
-            <div class="text-center mb-12">
-                <h2 class="text-4xl font-bold text-slate-800 mb-2">Student & Parent Success</h2>
-                <p class="text-slate-500">Real stories from the families in our musical community</p>
-            </div>
-
-            <div class="bg-white p-10 md:p-16 rounded-[4rem] shadow-xl relative overflow-hidden text-center mb-12 border border-orange-100">
-                <div class="absolute top-0 right-0 p-8 opacity-10">
-                    <svg class="w-32 h-32 text-orange-400" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M14.017 21L14.017 18C14.017 14.6863 16.7033 12 20.017 12L20.017 12V21H14.017ZM4.017 21L4.017 18C4.017 14.6863 6.7033 12 10.017 12L10.017 12V21H4.017Z" />
-                    </svg>
-                </div>
-                
-                <div class="flex justify-center mb-6">
-                    <div class="flex gap-1 text-amber-400 text-xl">
-                        <span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
-                    </div>
-                </div>
-                
-                <p class="text-xl md:text-2xl text-slate-700 italic leading-relaxed mb-8 relative z-10">
-                    "Little Haven Music has been incredibly patient and encouraging. My daughter went from struggling with basics to winning a <strong>Gold Award</strong> at her first competition. Their teaching methods are clear, professional, and most importantly, they keep my child excited!"
+                <p id="hero-subtitle" class="text-xl text-slate-600 mb-8 max-w-lg mx-auto md:mx-0">
+                    Premium piano and theory lessons by expert instructors in Rawang, Bandar Utama, and PJ.
                 </p>
-                
-                <div class="inline-flex items-center gap-4">
-                    <div class="w-12 h-12 rounded-full bg-orange-100 flex items-center justify-center font-bold text-orange-500 shadow-inner">ML</div>
-                    <div class="text-left">
-                        <p class="font-bold text-slate-800">Mrs. Lim</p>
-                        <p class="text-sm text-slate-400">Parent of Gold Award Student</p>
-                    </div>
+                <a href="https://calendar.app.google/eFDtbf8qrnRktBrB9" target="_blank" class="px-8 py-4 bg-slate-800 text-white rounded-full font-bold shadow-xl">
+                    Book Free Trial ✨
+                </a>
+            </div>
+            <div class="flex-1">
+                <div class="w-full h-[450px] bg-white rounded-[4rem] overflow-hidden shadow-2xl rotate-2 border-[12px] border-white">
+                    <img src="https://images.unsplash.com/photo-1514119412350-e174d90d280e?auto=format&fit=crop&q=80&w=800" alt="Piano" class="w-full h-full object-cover">
                 </div>
             </div>
+        </div>
+    </section>
 
-            <!-- Testimonial Submission - Colorful Card -->
-            <div class="max-w-2xl mx-auto bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-lg relative overflow-hidden">
-                <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-pink-300 via-purple-300 to-blue-300"></div>
-                <div class="text-center mb-8">
-                    <h3 class="text-xl font-bold text-slate-800">Share Your Journey</h3>
-                    <p class="text-sm text-slate-500">We love hearing about your musical milestones!</p>
+    <!-- Meet Our Teachers Section -->
+    <section id="teachers" class="py-24 px-6 pastel-mint">
+        <div class="max-w-6xl mx-auto">
+            <div class="flex flex-col md:flex-row items-center gap-12">
+                <div class="flex-1">
+                    <div class="img-container aspect-[4/5] bg-white">
+                        <img src="https://images.unsplash.com/photo-1598488035139-bdbb2231ce04?auto=format&fit=crop&q=80&w=800" alt="Sabrina Chai" class="w-full h-full object-cover">
+                    </div>
                 </div>
-                
-                <form id="reviewForm" class="space-y-4">
-                    <div class="flex justify-center gap-2 mb-4 star-rating">
-                        <button type="button" class="text-3xl text-slate-100 hover:text-amber-400" data-index="1">★</button>
-                        <button type="button" class="text-3xl text-slate-100 hover:text-amber-400" data-index="2">★</button>
-                        <button type="button" class="text-3xl text-slate-100 hover:text-amber-400" data-index="3">★</button>
-                        <button type="button" class="text-3xl text-slate-100 hover:text-amber-400" data-index="4">★</button>
-                        <button type="button" class="text-3xl text-slate-100 hover:text-amber-400" data-index="5">★</button>
-                    </div>
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        <input type="text" placeholder="Parent Name" required class="w-full px-4 py-3 rounded-xl border border-slate-100 focus:ring-2 focus:ring-purple-100 outline-none bg-slate-50">
-                        <input type="text" placeholder="Student's Achievement" class="w-full px-4 py-3 rounded-xl border border-slate-100 focus:ring-2 focus:ring-purple-100 outline-none bg-slate-50">
-                    </div>
-                    <textarea placeholder="Tell us about your experience..." rows="3" required class="w-full px-4 py-3 rounded-xl border border-slate-100 focus:ring-2 focus:ring-purple-100 outline-none bg-slate-50"></textarea>
-                    <button type="submit" class="w-full py-3 bg-gradient-to-r from-orange-400 to-pink-400 text-white rounded-xl font-bold hover:shadow-lg transition">Submit Testimonial</button>
-                </form>
-            </div>
-        </div>
-    </section>
-
-    <!-- Services - Sky/Blue focus -->
-    <section id="lessons" class="py-24 px-6 bg-sky-50/50">
-        <div class="max-w-6xl mx-auto text-center mb-16">
-            <h2 class="text-4xl font-bold text-slate-800 mb-4">Learning at Little Haven Music</h2>
-            <div class="w-24 h-1 bg-gradient-to-r from-sky-300 via-purple-300 to-pink-300 mx-auto rounded-full"></div>
-        </div>
-        
-        <div class="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div class="bg-white p-8 rounded-[2.5rem] card-hover border border-sky-100 text-center">
-                <div class="w-16 h-16 bg-pink-50 rounded-2xl flex items-center justify-center text-3xl mx-auto mb-6">🏠</div>
-                <h3 class="text-2xl font-bold mb-4 text-pink-600/80">In-Home Piano</h3>
-                <p class="text-slate-600 mb-6">Quality lessons in the comfort of your own home. Ideal for busy families in Rawang and PJ areas.</p>
-                <ul class="text-sm text-slate-500 space-y-3 text-left">
-                    <li class="flex items-center gap-2"><span class="text-pink-400">✔</span> Beginner to Intermediate levels</li>
-                    <li class="flex items-center gap-2"><span class="text-pink-400">✔</span> Early Childhood specialists</li>
-                    <li class="flex items-center gap-2"><span class="text-pink-400">✔</span> Personalized lesson plans</li>
-                </ul>
-            </div>
-            <div class="bg-white p-8 rounded-[2.5rem] card-hover border border-purple-100 text-center">
-                <div class="w-16 h-16 bg-purple-50 rounded-2xl flex items-center justify-center text-3xl mx-auto mb-6">🏆</div>
-                <h3 class="text-2xl font-bold mb-4 text-purple-600/80">Performance Prep</h3>
-                <p class="text-slate-600 mb-6">Proven track record with students winning Gold Awards and cash prizes in festivals.</p>
-                <ul class="text-sm text-slate-500 space-y-3 text-left">
-                    <li class="flex items-center gap-2"><span class="text-purple-400">✔</span> Competition readiness</li>
-                    <li class="flex items-center gap-2"><span class="text-purple-400">✔</span> Exam technique (ABRSM/Trinity)</li>
-                    <li class="flex items-center gap-2"><span class="text-purple-400">✔</span> Stage presence coaching</li>
-                </ul>
-            </div>
-            <div class="bg-white p-8 rounded-[2.5rem] card-hover border border-emerald-100 text-center">
-                <div class="w-16 h-16 bg-emerald-50 rounded-2xl flex items-center justify-center text-3xl mx-auto mb-6">🌐</div>
-                <h3 class="text-2xl font-bold mb-4 text-emerald-600/80">Digital Studio</h3>
-                <p class="text-slate-600 mb-6">Flexible online piano and theory lessons using high-quality video and interactive tools.</p>
-                <ul class="text-sm text-slate-500 space-y-3 text-left">
-                    <li class="flex items-center gap-2"><span class="text-emerald-400">✔</span> Worldwide availability</li>
-                    <li class="flex items-center gap-2"><span class="text-emerald-400">✔</span> Comprehensive theory lessons</li>
-                    <li class="flex items-center gap-2"><span class="text-emerald-400">✔</span> Bilingual instruction (EN/CN)</li>
-                </ul>
-            </div>
-        </div>
-    </section>
-
-    <!-- Service Areas - Multi-badge colors -->
-    <section id="areas" class="py-16 px-6 bg-white border-b border-slate-50">
-        <div class="max-w-4xl mx-auto text-center">
-            <h2 class="text-3xl font-bold text-slate-800 mb-6">Service Coverage</h2>
-            <div class="flex flex-wrap justify-center gap-3">
-                <span class="px-4 py-2 bg-pink-50 rounded-full text-pink-600 font-medium border border-pink-100">Anggun City</span>
-                <span class="px-4 py-2 bg-purple-50 rounded-full text-purple-600 font-medium border border-purple-100">Emerald Rawang</span>
-                <span class="px-4 py-2 bg-blue-50 rounded-full text-blue-600 font-medium border border-blue-100">Tropicana</span>
-                <span class="px-4 py-2 bg-amber-50 rounded-full text-amber-600 font-medium border border-amber-100">Bandar Utama</span>
-                <span class="px-4 py-2 bg-emerald-50 rounded-full text-emerald-600 font-medium border border-emerald-100">PJ / TTDI</span>
-                <span class="px-4 py-2 bg-indigo-50 rounded-full text-indigo-600 font-bold border border-indigo-100">🌐 Online Worldwide</span>
-            </div>
-        </div>
-    </section>
-
-    <!-- Contact Section - Lavender/Purple focus -->
-    <section id="contact" class="py-24 px-6 bg-slate-50 relative">
-        <div class="max-w-6xl mx-auto relative z-10">
-            <div class="text-center mb-12">
-                <h2 class="text-4xl font-bold text-slate-800 mb-4">Contact Us</h2>
-                <p class="text-slate-500">Ready to start your musical journey? Reach out for a consultation.</p>
-            </div>
-            
-            <div class="max-w-4xl mx-auto bg-white rounded-[3rem] shadow-2xl border border-slate-100 overflow-hidden flex flex-col md:flex-row">
-                <div class="flex-1 p-12 bg-gradient-to-br from-indigo-50 to-purple-50">
-                    <h3 class="text-2xl font-bold mb-6 text-indigo-800">Get in Touch</h3>
-                    <div class="space-y-4 text-indigo-700 font-medium">
-                        <p class="flex items-center gap-3"><span class="bg-white p-2 rounded-lg shadow-sm">📞</span> 017 651 6750</p>
-                        <p class="flex items-center gap-3"><span class="bg-white p-2 rounded-lg shadow-sm">✉️</span> littlehavenmusic.my@gmail.com</p>
-                        <p class="flex items-center gap-3"><span class="bg-white p-2 rounded-lg shadow-sm">📍</span> Rawang, BU, PJ & Online</p>
-                        <!-- SSM -->
-                        <div class="pt-4 mt-6 border-t border-indigo-100">
-                            <p class="text-xs uppercase tracking-widest text-indigo-400 mb-1">Registered Studio</p>
-                            <p class="text-sm font-bold">Little Haven Music Studio</p>
-                            <p class="text-xs opacity-75">(003685629-H)</p>
+                <div class="flex-1">
+                    <h4 class="text-emerald-500 font-bold uppercase tracking-widest text-sm mb-4">Lead Instructor</h4>
+                    <h2 id="teacher-name" class="text-4xl font-bold text-slate-800 mb-2 italic">Sabrina Chai</h2>
+                    <p id="teacher-creds" class="text-emerald-600 font-bold text-sm mb-6">
+                         B.A. (Hons) Music • Associate Performance Diploma
+                    </p>
+                    <div class="space-y-6 text-slate-600 text-lg leading-relaxed">
+                        <p id="teacher-bio">With years of dedicated teaching experience, Sabrina specializes in nurturing young talents through the ABRSM curriculum.</p>
+                        
+                        <div class="bg-white/50 p-6 rounded-2xl border border-emerald-100">
+                            <h5 class="text-slate-800 font-bold text-sm uppercase mb-3">✨ EXPERIENCE & PERFORMANCE</h5>
+                            <p id="teacher-experience" class="text-base italic">An active contributor to the classical scene, Sabrina brings professional performance insights from her time working with the prestigious <strong>Bachfest Malaysia</strong>.</p>
                         </div>
+
+                        <ul id="highlights-list" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <!-- Highlights loaded from Firestore -->
+                        </ul>
                     </div>
-                </div>
-                
-                <div class="flex-[1.5] p-12">
-                    <form id="contactForm" class="space-y-4">
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                            <input type="text" placeholder="Your Name" required class="w-full px-4 py-3 rounded-xl border border-slate-100 focus:ring-2 focus:ring-indigo-100 outline-none bg-slate-50">
-                            <select required class="w-full px-4 py-3 rounded-xl border border-slate-100 focus:ring-2 focus:ring-indigo-100 outline-none bg-slate-50 text-slate-500">
-                                <option value="">Interested in...</option>
-                                <option value="home">In-Home Piano Lessons</option>
-                                <option value="online">Online Studio Lessons</option>
-                                <option value="exam">ABRSM / Competition Prep</option>
-                                <option value="theory">Music Theory Only</option>
-                            </select>
-                        </div>
-                        <input type="text" placeholder="Area (e.g. Anggun City, Tropicana, BU)" required class="w-full px-4 py-3 rounded-xl border border-slate-100 focus:ring-2 focus:ring-indigo-100 outline-none bg-slate-50">
-                        <input type="email" placeholder="Your Email Address" required class="w-full px-4 py-3 rounded-xl border border-slate-100 focus:ring-2 focus:ring-indigo-100 outline-none bg-slate-50">
-                        <textarea placeholder="Student's age and experience..." rows="3" class="w-full px-4 py-3 rounded-xl border border-slate-100 focus:ring-2 focus:ring-indigo-100 outline-none bg-slate-50"></textarea>
-                        <button type="submit" class="w-full py-4 bg-slate-800 text-white rounded-xl font-bold hover:bg-slate-700 transition shadow-lg">Send Inquiry</button>
-                    </form>
                 </div>
             </div>
         </div>
     </section>
 
-    <footer class="py-12 px-6 bg-white text-center border-t border-slate-50 relative overflow-hidden">
-        <!-- Footer Blobs -->
-        <div class="blob w-32 h-32 bg-pink-100 -bottom-10 -left-10"></div>
-        <div class="blob w-32 h-32 bg-blue-100 -top-10 -right-10"></div>
+    <!-- Admin Tools -->
+    <div id="admin-bar" class="hidden fixed bottom-6 left-1/2 -translate-x-1/2 bg-slate-900 text-white px-6 py-4 rounded-full shadow-2xl flex items-center gap-6 z-[99]">
+        <span class="text-xs font-bold text-emerald-400">ADMIN MODE ACTIVE</span>
+        <button onclick="saveData()" class="bg-emerald-500 px-4 py-2 rounded-xl text-xs font-bold hover:bg-emerald-400 transition">Save Changes</button>
+        <button onclick="logout()" class="text-xs font-bold text-slate-400 hover:text-white">Exit</button>
+    </div>
 
-        <div class="flex justify-center items-center gap-2 mb-4 relative z-10">
-            <div class="w-8 h-8 bg-pink-50 rounded-lg flex items-center justify-center text-pink-400 shadow-sm">
-                <svg viewBox="0 0 100 100" class="w-5 h-5" fill="currentColor">
-                    <path d="M25 30 L 75 30 L 75 70 C 75 80, 50 80, 50 70 L 50 50 L 25 50 Z" />
-                </svg>
-            </div>
-            <span class="text-sm font-bold text-slate-700">Little Haven Music</span>
-        </div>
-        <p class="text-[10px] text-slate-400 uppercase tracking-[0.2em] mb-2 font-bold relative z-10">Little Haven Music Studio (003685629-H)</p>
-        <p class="text-xs text-slate-300 uppercase tracking-widest relative z-10">&copy; 2024. Nurturing musical excellence in Malaysia.</p>
+    <!-- Footer -->
+    <footer class="py-12 px-6 text-center text-slate-400 text-xs font-bold uppercase tracking-[0.2em]">
+        <p class="mb-4">Little Haven Music Studio (003685629-H)</p>
+        <button onclick="showLogin()" class="opacity-10 hover:opacity-100 transition">Admin Login</button>
     </footer>
 
-    <script>
-        const starButtons = document.querySelectorAll('.star-rating button');
-        let selectedRating = 0;
+    <!-- Firebase SDK -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, onAuthStateChanged, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, getDoc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        starButtons.forEach(button => {
-            button.addEventListener('click', () => {
-                selectedRating = button.dataset.index;
-                updateStars(selectedRating);
-            });
-        });
+        const firebaseConfig = JSON.parse(__firebase_config);
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+        
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'little-haven';
 
-        function updateStars(rating) {
-            starButtons.forEach(btn => {
-                if (btn.dataset.index <= rating) {
-                    btn.classList.add('text-amber-400');
-                    btn.classList.remove('text-slate-100');
+        let isAdmin = false;
+        let siteData = {
+            heroTitle: "Where Every Note Finds a Home.",
+            heroSubtitle: "Premium piano and theory lessons by expert instructors in Rawang, Bandar Utama, and PJ.",
+            teacherName: "Sabrina Chai",
+            teacherCreds: "B.A. (Hons) Music • Associate Performance Diploma",
+            teacherBio: "With years of dedicated teaching experience, Sabrina specializes in nurturing young talents through the ABRSM curriculum. Her approach blends technical precision with creative expression.",
+            teacherExperience: "An active contributor to the classical scene, Sabrina brings professional performance insights from her time working with the prestigious Bachfest Malaysia.",
+            highlights: [
+                "ABRSM Excellence", 
+                "Competition Mentor", 
+                "Early Childhood Specialist", 
+                "100% Distinction Track",
+                "Personalized Curriculum",
+                "Performance Opportunities"
+            ]
+        };
+
+        // Authentication Protocol
+        const initAuth = async () => {
+            try {
+                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                    await signInWithCustomToken(auth, __initial_auth_token);
                 } else {
-                    btn.classList.remove('text-amber-400');
-                    btn.classList.add('text-slate-100');
+                    await signInAnonymously(auth);
                 }
+            } catch (e) {
+                console.error("Auth error:", e);
+                document.getElementById('loading').innerText = "Auth Error. Please check connection.";
+            }
+        };
+
+        const setupAuthListener = () => {
+            onAuthStateChanged(auth, (user) => {
+                if (user) {
+                    loadData();
+                }
+            });
+        };
+
+        // Data Management with Rule 1 Compliant Path
+        // FIX: The path must have an even number of segments.
+        // Format: artifacts/{appId}/public/data/{collectionName}/{documentId}
+        // Current error: artifacts/{appId}/public/data/siteContent has 5 segments.
+        // Fix: Use artifacts/{appId}/public/data/content/v1 (6 segments)
+        function loadData() {
+            if (!auth.currentUser) return;
+
+            const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'content', 'v1');
+            
+            onSnapshot(docRef, (snapshot) => {
+                if (snapshot.exists()) {
+                    siteData = snapshot.data();
+                    renderSite();
+                } else {
+                    // Initialize with defaults if first time
+                    setDoc(docRef, siteData);
+                    renderSite();
+                }
+                document.getElementById('loading').style.display = 'none';
+            }, (err) => {
+                console.error("Snapshot error:", err);
+                document.getElementById('loading').innerText = "Database Error. Please check Firestore permissions.";
             });
         }
 
-        document.getElementById('reviewForm').addEventListener('submit', (e) => {
-            e.preventDefault();
-            if (selectedRating === 0) {
-                alert("Please provide a rating for your testimonial.");
-                return;
+        function renderSite() {
+            document.getElementById('hero-title').innerText = siteData.heroTitle || "";
+            document.getElementById('hero-subtitle').innerText = siteData.heroSubtitle || "";
+            document.getElementById('teacher-name').innerText = siteData.teacherName || "";
+            document.getElementById('teacher-creds').innerText = siteData.teacherCreds || "";
+            document.getElementById('teacher-bio').innerText = siteData.teacherBio || "";
+            document.getElementById('teacher-experience').innerText = siteData.teacherExperience || "";
+            
+            const hList = document.getElementById('highlights-list');
+            if (hList) {
+                hList.innerHTML = '';
+                const highlights = siteData.highlights || [];
+                highlights.forEach((h, i) => {
+                    const li = document.createElement('li');
+                    li.className = "flex items-center gap-3";
+                    li.innerHTML = `
+                        <span class="w-2 h-2 bg-emerald-400 rounded-full"></span>
+                        <span class="${isAdmin ? 'admin-edit' : ''} text-sm font-bold" data-key="highlights" data-index="${i}">${h}</span>
+                    `;
+                    hList.appendChild(li);
+                });
             }
-            alert("✨ Thank you for sharing your story! Your testimonial has been submitted for verification.");
-            e.target.reset();
-            updateStars(0);
-            selectedRating = 0;
-        });
 
-        document.getElementById('contactForm').addEventListener('submit', (e) => {
-            e.preventDefault();
-            alert("✨ Inquiry sent! Little Haven Music will contact you within 24 hours.");
-            e.target.reset();
-        });
+            if (isAdmin) {
+                enableEditing();
+            }
+        }
+
+        function enableEditing() {
+            const editables = ['hero-title', 'hero-subtitle', 'teacher-name', 'teacher-creds', 'teacher-bio', 'teacher-experience'];
+            editables.forEach(id => {
+                const el = document.getElementById(id);
+                if (el) {
+                    el.contentEditable = "true";
+                    el.classList.add('admin-edit');
+                }
+            });
+            document.querySelectorAll('[data-key="highlights"]').forEach(el => {
+                el.contentEditable = "true";
+            });
+            document.getElementById('admin-bar').classList.remove('hidden');
+        }
+
+        window.showLogin = () => {
+            const pass = prompt("Enter Admin Password:");
+            if (pass === "studio88") { 
+                isAdmin = true;
+                renderSite();
+            } else {
+                alert("Incorrect password.");
+            }
+        };
+
+        window.logout = () => {
+            isAdmin = false;
+            document.getElementById('admin-bar').classList.add('hidden');
+            location.reload();
+        };
+
+        window.saveData = async () => {
+            if (!auth.currentUser) return;
+
+            const updated = {
+                heroTitle: document.getElementById('hero-title').innerText,
+                heroSubtitle: document.getElementById('hero-subtitle').innerText,
+                teacherName: document.getElementById('teacher-name').innerText,
+                teacherCreds: document.getElementById('teacher-creds').innerText,
+                teacherBio: document.getElementById('teacher-bio').innerText,
+                teacherExperience: document.getElementById('teacher-experience').innerText,
+                highlights: Array.from(document.querySelectorAll('[data-key="highlights"]')).map(el => el.innerText)
+            };
+            
+            try {
+                const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'content', 'v1');
+                await setDoc(docRef, updated);
+                alert("Changes saved to cloud! ✨");
+            } catch (e) {
+                console.error("Save error:", e);
+                alert("Error saving: " + e.message);
+            }
+        };
+
+        // Start App
+        initAuth().then(setupAuthListener);
     </script>
 </body>
 </html>
