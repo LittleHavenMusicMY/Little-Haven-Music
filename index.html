@@ -78,8 +78,9 @@
 </head>
 <body class="text-slate-700">
 
-    <div id="loading" class="fixed inset-0 bg-white z-[100] flex items-center justify-center font-bold text-slate-400">
-        Loading Studio...
+    <div id="loading" class="fixed inset-0 bg-white z-[100] flex flex-col items-center justify-center font-bold text-slate-400">
+        <div class="mb-4 text-pink-400 animate-pulse text-2xl">Little Haven</div>
+        <div class="text-xs uppercase tracking-widest">Loading Studio...</div>
     </div>
 
     <!-- Promo -->
@@ -197,7 +198,7 @@
             <!-- New Review Form (Hidden by Default) -->
             <div id="testimonial-form-container" class="hidden mb-16 bg-rose-50/30 p-8 rounded-[3rem] border border-rose-100 animate-in fade-in slide-in-from-top-4 duration-500">
                 <h3 class="text-xl font-bold text-slate-800 mb-6">Leave a Testimonial</h3>
-                <form onsubmit="submitTestimonial(event)" class="grid md:grid-cols-2 gap-6">
+                <form id="testimonial-form" onsubmit="submitTestimonial(event)" class="grid md:grid-cols-2 gap-6">
                     <div class="space-y-4">
                         <input type="text" id="test-name" placeholder="Parent Name (e.g., Mrs. Tan)" required class="w-full px-6 py-4 rounded-2xl bg-white border border-rose-100 outline-none focus:ring-2 focus:ring-rose-400">
                         <textarea id="test-quote" rows="4" placeholder="Your child's progress or experience with Sabrina..." required class="w-full px-6 py-4 rounded-2xl bg-white border border-rose-100 outline-none focus:ring-2 focus:ring-rose-400"></textarea>
@@ -310,12 +311,11 @@
         import { getAuth, signInAnonymously, onAuthStateChanged, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, doc, getDoc, setDoc, onSnapshot, collection, addDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        const firebaseConfig = JSON.parse(__firebase_config);
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
         const apiKey = "";
         const appId = typeof __app_id !== 'undefined' ? __app_id : 'little-haven';
+        
+        let db, auth;
+        let isFirebaseActive = false;
 
         let siteData = {
             heroTitle: "Where Every Note Finds a Home.",
@@ -337,6 +337,57 @@
                 { author: "Sarah W.", quote: "Highly recommend the virtual studio! The tech setup is so clear it feels like she's in the room." }
             ]
         };
+
+        // SAFETY: Fail-safe if Firebase takes too long or fails
+        const safetyTimer = setTimeout(() => {
+            if (document.getElementById('loading').style.display !== 'none') {
+                console.warn("Firebase taking too long - falling back to default content.");
+                render();
+                document.getElementById('loading').style.display = 'none';
+            }
+        }, 3000);
+
+        try {
+            if (typeof __firebase_config !== 'undefined') {
+                const firebaseConfig = JSON.parse(__firebase_config);
+                const app = initializeApp(firebaseConfig);
+                auth = getAuth(app);
+                db = getFirestore(app);
+                isFirebaseActive = true;
+
+                onAuthStateChanged(auth, async (user) => {
+                    if (user) {
+                        const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'content', 'v1');
+                        onSnapshot(docRef, (snap) => {
+                            clearTimeout(safetyTimer);
+                            if (snap.exists()) {
+                                siteData = { ...siteData, ...snap.data() };
+                            } else {
+                                setDoc(docRef, siteData);
+                            }
+                            render();
+                            document.getElementById('loading').style.display = 'none';
+                        }, (err) => {
+                            console.error("Firestore sync error:", err);
+                            render();
+                            document.getElementById('loading').style.display = 'none';
+                        });
+                    } else {
+                        if (typeof __initial_auth_token !== 'undefined') {
+                            await signInWithCustomToken(auth, __initial_auth_token);
+                        } else {
+                            await signInAnonymously(auth);
+                        }
+                    }
+                });
+            } else {
+                throw new Error("No config");
+            }
+        } catch (e) {
+            console.warn("Firebase not available:", e.message);
+            render();
+            document.getElementById('loading').style.display = 'none';
+        }
 
         async function callGemini(prompt, systemPrompt = "") {
             let retries = 0;
@@ -402,21 +453,6 @@
             btn.innerText = "Polish Draft ✨";
         };
 
-        onAuthStateChanged(auth, async (user) => {
-            if (user) {
-                const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'content', 'v1');
-                onSnapshot(docRef, (snap) => {
-                    if (snap.exists()) siteData = snap.data();
-                    else setDoc(docRef, siteData);
-                    render();
-                    document.getElementById('loading').style.display = 'none';
-                });
-            } else {
-                if (typeof __initial_auth_token !== 'undefined') await signInWithCustomToken(auth, __initial_auth_token);
-                else await signInAnonymously(auth);
-            }
-        });
-
         function render() {
             document.getElementById('hero-title').innerText = siteData.heroTitle;
             document.getElementById('hero-subtitle').innerText = siteData.heroSubtitle;
@@ -425,14 +461,14 @@
             document.getElementById('teacher-bio').innerText = siteData.teacherBio;
             document.getElementById('teacher-experience').innerHTML = siteData.teacherExperience;
             
-            document.getElementById('highlights-list').innerHTML = siteData.highlights.map(h => `
+            document.getElementById('highlights-list').innerHTML = (siteData.highlights || []).map(h => `
                 <li class="flex items-center gap-3">
                     <span class="w-2 h-2 bg-emerald-400 rounded-full"></span>
                     <span class="text-sm font-bold text-slate-600">${h}</span>
                 </li>
             `).join('');
 
-            document.getElementById('lessons-container').innerHTML = siteData.lessons.map(l => `
+            document.getElementById('lessons-container').innerHTML = (siteData.lessons || []).map(l => `
                 <div class="bg-white p-8 rounded-[3rem] border border-slate-100 shadow-sm card-hover">
                     <span class="px-4 py-1 text-[10px] font-bold uppercase bg-${l.color}-50 text-${l.color}-500 rounded-full mb-4 inline-block">${l.tag}</span>
                     <h3 class="text-xl font-bold text-slate-800 mb-3">${l.title}</h3>
@@ -440,7 +476,7 @@
                 </div>
             `).join('');
 
-            document.getElementById('testimonials-container').innerHTML = siteData.testimonials.map(t => `
+            document.getElementById('testimonials-container').innerHTML = (siteData.testimonials || []).map(t => `
                 <div class="bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-sm card-hover flex flex-col justify-between">
                     <p class="text-slate-500 italic mb-6 text-sm">"${t.quote}"</p>
                     <p class="text-[10px] font-bold uppercase tracking-widest text-slate-800">— ${t.author}</p>
@@ -450,6 +486,10 @@
 
         window.submitTestimonial = async (e) => {
             e.preventDefault();
+            if(!isFirebaseActive) {
+                alert("Database connection is currently offline. Please try again in a moment.");
+                return;
+            }
             const btn = document.getElementById('test-submit-btn');
             btn.innerText = "Submitting...";
             try {
@@ -470,6 +510,10 @@
 
         window.handleInquiry = async (e) => {
             e.preventDefault();
+            if(!isFirebaseActive) {
+                alert("Inquiry system is currently offline. Please contact via WhatsApp.");
+                return;
+            }
             const btn = e.target.querySelector('button[type="submit"]');
             btn.innerText = "Sending...";
             try {
@@ -481,8 +525,10 @@
                     message: document.getElementById('inq-msg').value,
                     at: new Date()
                 });
-                alert("Sent! ✨");
+                alert("Your inquiry has been sent! We will contact you shortly. ✨");
                 e.target.reset();
+            } catch (err) {
+                alert("Error sending. Please message +60 17-651 6750 instead.");
             } finally { btn.innerText = "Send Inquiry"; }
         };
     </script>
