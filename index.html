@@ -181,175 +181,111 @@
 
     <!-- Firebase SDK -->
     <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInAnonymously, onAuthStateChanged, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, doc, getDoc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+        import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+        import { getFirestore, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
 
-         const firebaseConfig = {
-    apiKey: "AIzaSyARppz0lky5ruG6HtJQnrQr3i-PEFNPcII",
-    authDomain: "little-haven-music.firebaseapp.com",
-    projectId: "little-haven-music",
-    storageBucket: "little-haven-music.firebasestorage.app",
-    messagingSenderId: "959165390844",
-    appId: "1:959165390844:web:f8a9873ddfdf6c6c8cdc79",
-    measurementId: "G-ETGYBDRS7S"
-  };
+        const firebaseConfig = {
+            apiKey: "AIzaSyARppz0lky5ruG6HtJQnrQr3i-PEFNPcII",
+            authDomain: "little-haven-music.firebaseapp.com",
+            projectId: "little-haven-music",
+            storageBucket: "little-haven-music.firebasestorage.app",
+            messagingSenderId: "959165390844",
+            appId: "1:959165390844:web:f8a9873ddfdf6c6c8cdc79",
+            measurementId: "G-ETGYBDRS7S"
+        };
+
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
-        
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'little-haven';
-
+        const appId = 'little-haven-v1'; // Simplified ID
         let isAdmin = false;
+
+        // Default Data
         let siteData = {
             heroTitle: "Where Every Note Finds a Home.",
             heroSubtitle: "Premium piano and theory lessons by expert instructors in Rawang, Bandar Utama, and PJ.",
             teacherName: "Sabrina Chai",
             teacherCreds: "B.A. (Hons) Music • Associate Performance Diploma",
             teacherBio: "With years of dedicated teaching experience, Sabrina specializes in nurturing young talents through the ABRSM curriculum. Her approach blends technical precision with creative expression.",
-            teacherExperience: "An active contributor to the classical scene, Sabrina brings professional performance insights from her time working with the prestigious Bachfest Malaysia.",
-            highlights: [
-                "ABRSM Excellence", 
-                "Competition Mentor", 
-                "Early Childhood Specialist", 
-                "100% Distinction Track",
-                "Personalized Curriculum",
-                "Performance Opportunities"
-            ]
+            teacherExperience: "An active contributor to the classical scene, Sabrina brings professional performance insights from her time working with the prestigious Bachfest Malaysia."
         };
 
-        // Authentication Protocol
-        const initAuth = async () => {
+        async function init() {
+            // 1. Auth
             try {
-                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
-                    await signInWithCustomToken(auth, __initial_auth_token);
-                } else {
-                    await signInAnonymously(auth);
-                }
-            } catch (e) {
-                console.error("Auth error:", e);
-                document.getElementById('loading').innerText = "Auth Error. Please check connection.";
-            }
-        };
+                await signInAnonymously(auth);
+            } catch (e) { console.error("Auth failed"); }
 
-        const setupAuthListener = () => {
-            onAuthStateChanged(auth, (user) => {
-                if (user) {
-                    loadData();
-                }
-            });
-        };
+            // 2. Database Listener
+            // This path 'studios/little-haven-v1' matches standard Firestore rules
+            onSnapshot(doc(db, "studios", appId), (snapshot) => {
+                const loadingScreen = document.getElementById('loading');
+                if (loadingScreen) loadingScreen.style.display = 'none';
 
-        // Data Management with Rule 1 Compliant Path
-        // FIX: The path must have an even number of segments.
-        // Format: artifacts/{appId}/public/data/{collectionName}/{documentId}
-        // Current error: artifacts/{appId}/public/data/siteContent has 5 segments.
-        // Fix: Use artifacts/{appId}/public/data/content/v1 (6 segments)
-        function loadData() {
-            if (!auth.currentUser) return;
-
-            const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'content', 'v1');
-            
-            onSnapshot(docRef, (snapshot) => {
                 if (snapshot.exists()) {
                     siteData = snapshot.data();
                     renderSite();
                 } else {
-                    // Initialize with defaults if first time
-                    setDoc(docRef, siteData);
+                    // First time setup: save defaults to cloud
+                    setDoc(doc(db, "studios", appId), siteData);
                     renderSite();
                 }
-                document.getElementById('loading').style.display = 'none';
-            }, (err) => {
-                console.error("Snapshot error:", err);
-                document.getElementById('loading').innerText = "Database Error. Please check Firestore permissions.";
             });
         }
 
         function renderSite() {
-            document.getElementById('hero-title').innerText = siteData.heroTitle || "";
-            document.getElementById('hero-subtitle').innerText = siteData.heroSubtitle || "";
-            document.getElementById('teacher-name').innerText = siteData.teacherName || "";
-            document.getElementById('teacher-creds').innerText = siteData.teacherCreds || "";
-            document.getElementById('teacher-bio').innerText = siteData.teacherBio || "";
-            document.getElementById('teacher-experience').innerText = siteData.teacherExperience || "";
-            
-            const hList = document.getElementById('highlights-list');
-            if (hList) {
-                hList.innerHTML = '';
-                const highlights = siteData.highlights || [];
-                highlights.forEach((h, i) => {
-                    const li = document.createElement('li');
-                    li.className = "flex items-center gap-3";
-                    li.innerHTML = `
-                        <span class="w-2 h-2 bg-emerald-400 rounded-full"></span>
-                        <span class="${isAdmin ? 'admin-edit' : ''} text-sm font-bold" data-key="highlights" data-index="${i}">${h}</span>
-                    `;
-                    hList.appendChild(li);
-                });
-            }
-
-            if (isAdmin) {
-                enableEditing();
-            }
-        }
-
-        function enableEditing() {
-            const editables = ['hero-title', 'hero-subtitle', 'teacher-name', 'teacher-creds', 'teacher-bio', 'teacher-experience'];
-            editables.forEach(id => {
+            // Map the data to the IDs in your HTML
+            const fields = ['hero-title', 'hero-subtitle', 'teacher-name', 'teacher-creds', 'teacher-bio', 'teacher-experience'];
+            fields.forEach(id => {
                 const el = document.getElementById(id);
                 if (el) {
-                    el.contentEditable = "true";
-                    el.classList.add('admin-edit');
+                    const dataKey = id.replace(/-([a-z])/g, g => g[1].toUpperCase()); // converts hero-title to heroTitle
+                    el.innerText = siteData[dataKey] || "";
+                    if (isAdmin) {
+                        el.contentEditable = "true";
+                        el.style.border = "1px dashed #fbbf24";
+                        el.style.padding = "4px";
+                    }
                 }
             });
-            document.querySelectorAll('[data-key="highlights"]').forEach(el => {
-                el.contentEditable = "true";
-            });
-            document.getElementById('admin-bar').classList.remove('hidden');
+
+            if (isAdmin) {
+                const bar = document.getElementById('admin-bar');
+                if (bar) bar.classList.remove('hidden');
+            }
         }
 
         window.showLogin = () => {
             const pass = prompt("Enter Admin Password:");
-            if (pass === "studio88") { 
+            if (pass === "studio88") {
                 isAdmin = true;
                 renderSite();
+                alert("Admin Mode Active!");
             } else {
                 alert("Incorrect password.");
             }
         };
 
-        window.logout = () => {
-            isAdmin = false;
-            document.getElementById('admin-bar').classList.add('hidden');
-            location.reload();
-        };
-
         window.saveData = async () => {
-            if (!auth.currentUser) return;
-
             const updated = {
                 heroTitle: document.getElementById('hero-title').innerText,
                 heroSubtitle: document.getElementById('hero-subtitle').innerText,
                 teacherName: document.getElementById('teacher-name').innerText,
                 teacherCreds: document.getElementById('teacher-creds').innerText,
                 teacherBio: document.getElementById('teacher-bio').innerText,
-                teacherExperience: document.getElementById('teacher-experience').innerText,
-                highlights: Array.from(document.querySelectorAll('[data-key="highlights"]')).map(el => el.innerText)
+                teacherExperience: document.getElementById('teacher-experience').innerText
             };
-            
+
             try {
-                const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'content', 'v1');
-                await setDoc(docRef, updated);
+                await setDoc(doc(db, "studios", appId), updated);
                 alert("Changes saved to cloud! ✨");
             } catch (e) {
-                console.error("Save error:", e);
-                alert("Error saving: " + e.message);
+                alert("Save Error: " + e.message);
             }
         };
 
-        // Start App
-        initAuth().then(setupAuthListener);
+        init();
     </script>
 </body>
 </html>
