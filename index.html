@@ -180,9 +180,9 @@
     </footer>
 
     <!-- Firebase SDK -->
-    <script type="module">
+   <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
-        import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+        import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
         import { getFirestore, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
 
         const firebaseConfig = {
@@ -198,94 +198,62 @@
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
-        const appId = 'little-haven-v1'; // Simplified ID
-        let isAdmin = false;
 
-        // Default Data
-        let siteData = {
-            heroTitle: "Where Every Note Finds a Home.",
-            heroSubtitle: "Premium piano and theory lessons by expert instructors in Rawang, Bandar Utama, and PJ.",
-            teacherName: "Sabrina Chai",
-            teacherCreds: "B.A. (Hons) Music • Associate Performance Diploma",
-            teacherBio: "With years of dedicated teaching experience, Sabrina specializes in nurturing young talents through the ABRSM curriculum. Her approach blends technical precision with creative expression.",
-            teacherExperience: "An active contributor to the classical scene, Sabrina brings professional performance insights from her time working with the prestigious Bachfest Malaysia."
-        };
-
-        async function init() {
-            // 1. Auth
+        // This function runs as soon as the page loads
+        async function startApp() {
             try {
                 await signInAnonymously(auth);
-            } catch (e) { console.error("Auth failed"); }
+                
+                // Hide loading screen after 1 second even if DB fails
+                setTimeout(() => {
+                    const loader = document.getElementById('loading') || document.getElementById('loading-screen');
+                    if (loader) loader.style.display = 'none';
+                }, 1000);
 
-            // 2. Database Listener
-            // This path 'studios/little-haven-v1' matches standard Firestore rules
-            onSnapshot(doc(db, "studios", appId), (snapshot) => {
-                const loadingScreen = document.getElementById('loading');
-                if (loadingScreen) loadingScreen.style.display = 'none';
-
-                if (snapshot.exists()) {
-                    siteData = snapshot.data();
-                    renderSite();
-                } else {
-                    // First time setup: save defaults to cloud
-                    setDoc(doc(db, "studios", appId), siteData);
-                    renderSite();
-                }
-            });
-        }
-
-        function renderSite() {
-            // Map the data to the IDs in your HTML
-            const fields = ['hero-title', 'hero-subtitle', 'teacher-name', 'teacher-creds', 'teacher-bio', 'teacher-experience'];
-            fields.forEach(id => {
-                const el = document.getElementById(id);
-                if (el) {
-                    const dataKey = id.replace(/-([a-z])/g, g => g[1].toUpperCase()); // converts hero-title to heroTitle
-                    el.innerText = siteData[dataKey] || "";
-                    if (isAdmin) {
-                        el.contentEditable = "true";
-                        el.style.border = "1px dashed #fbbf24";
-                        el.style.padding = "4px";
+                // Listen for database content
+                onSnapshot(doc(db, "studios", "little-haven"), (snapshot) => {
+                    if (snapshot.exists()) {
+                        const data = snapshot.data();
+                        // Look for elements with data-edit attribute and fill them
+                        document.querySelectorAll('[data-edit]').forEach(el => {
+                            const key = el.getAttribute('data-edit');
+                            if (data[key]) el.innerText = data[key];
+                        });
                     }
-                }
-            });
-
-            if (isAdmin) {
-                const bar = document.getElementById('admin-bar');
-                if (bar) bar.classList.remove('hidden');
+                });
+            } catch (err) {
+                console.error("Firebase Error:", err);
             }
         }
 
+        // Admin Functions
         window.showLogin = () => {
-            const pass = prompt("Enter Admin Password:");
-            if (pass === "studio88") {
-                isAdmin = true;
-                renderSite();
-                alert("Admin Mode Active!");
-            } else {
-                alert("Incorrect password.");
+            const p = prompt("Password:");
+            if (p === "studio88") {
+                document.querySelectorAll('[data-edit]').forEach(el => {
+                    el.contentEditable = true;
+                    el.style.border = "1px dashed orange";
+                });
+                const bar = document.getElementById('admin-bar');
+                if (bar) bar.classList.remove('hidden');
+                alert("Admin Mode On");
             }
         };
 
         window.saveData = async () => {
-            const updated = {
-                heroTitle: document.getElementById('hero-title').innerText,
-                heroSubtitle: document.getElementById('hero-subtitle').innerText,
-                teacherName: document.getElementById('teacher-name').innerText,
-                teacherCreds: document.getElementById('teacher-creds').innerText,
-                teacherBio: document.getElementById('teacher-bio').innerText,
-                teacherExperience: document.getElementById('teacher-experience').innerText
-            };
-
+            const data = {};
+            document.querySelectorAll('[data-edit]').forEach(el => {
+                data[el.getAttribute('data-edit')] = el.innerText;
+            });
             try {
-                await setDoc(doc(db, "studios", appId), updated);
-                alert("Changes saved to cloud! ✨");
+                await setDoc(doc(db, "studios", "little-haven"), data);
+                alert("Saved!");
             } catch (e) {
-                alert("Save Error: " + e.message);
+                alert("Error: " + e.message);
             }
         };
 
-        init();
+        startApp();
     </script>
 </body>
 </html>
