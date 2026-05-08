@@ -186,7 +186,15 @@
         import { getAuth, signInAnonymously, onAuthStateChanged, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, doc, getDoc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        const firebaseConfig = JSON.parse(__firebase_config);
+         const firebaseConfig = {
+    apiKey: "AIzaSyARppz0lky5ruG6HtJQnrQr3i-PEFNPcII",
+    authDomain: "little-haven-music.firebaseapp.com",
+    projectId: "little-haven-music",
+    storageBucket: "little-haven-music.firebasestorage.app",
+    messagingSenderId: "959165390844",
+    appId: "1:959165390844:web:f8a9873ddfdf6c6c8cdc79",
+    measurementId: "G-ETGYBDRS7S"
+  };
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
