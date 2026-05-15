@@ -59,7 +59,6 @@
             100% { transform: scale(1.1) translate(20px, 20px); }
         }
 
-        /* AI Feature Styles */
         .loading-dots:after {
             content: ' .';
             animation: dots 1.5s steps(5, end) infinite;
@@ -74,12 +73,13 @@
 </head>
 <body class="text-slate-700">
 
+    <!-- Loading Screen -->
     <div id="loading" class="fixed inset-0 bg-white z-[100] flex flex-col items-center justify-center font-bold text-slate-400">
         <div class="mb-4 text-pink-400 animate-pulse text-2xl">Little Haven</div>
         <div class="text-xs uppercase tracking-widest">Loading Studio...</div>
     </div>
 
-    <!-- Promo -->
+    <!-- Promo Bar -->
     <div class="bg-gradient-to-r from-rose-400 via-fuchsia-400 to-indigo-400 text-white py-2 px-4 text-center text-sm font-bold tracking-wide">
         ✨ Join our <span class="underline decoration-2 underline-offset-4">FREE TRIAL</span> class today! Code: <span class="bg-white/20 px-2 py-0.5 rounded ml-1">LHM NEWSTUDENT</span>
     </div>
@@ -152,7 +152,8 @@
             <div class="flex flex-col md:flex-row items-center gap-16">
                 <div class="flex-1">
                     <div class="img-container aspect-[4/5] bg-white relative">
-                        <img src="JPG_Sabrina-25_TU.jpg" alt="Sabrina Chai" class="w-full h-full object-cover">
+                        <!-- Standard fallback if local image fails -->
+                        <img src="JPG_Sabrina-25_TU.jpg" onerror="this.src='https://images.unsplash.com/photo-1552058544-f2b08422138a?q=80&w=800'" alt="Sabrina Chai" class="w-full h-full object-cover">
                     </div>
                 </div>
                 <div class="flex-1">
@@ -191,16 +192,15 @@
                 </button>
             </div>
 
-            <!-- New Review Form (Hidden by Default) -->
-            <div id="testimonial-form-container" class="hidden mb-16 bg-rose-50/30 p-8 rounded-[3rem] border border-rose-100 animate-in fade-in slide-in-from-top-4 duration-500">
+            <div id="testimonial-form-container" class="hidden mb-16 bg-rose-50/30 p-8 rounded-[3rem] border border-rose-100">
                 <h3 class="text-xl font-bold text-slate-800 mb-6">Leave a Testimonial</h3>
                 <form id="testimonial-form" onsubmit="submitTestimonial(event)" class="grid md:grid-cols-2 gap-6">
                     <div class="space-y-4">
                         <input type="text" id="test-name" placeholder="Parent Name (e.g., Mrs. Tan)" required class="w-full px-6 py-4 rounded-2xl bg-white border border-rose-100 outline-none focus:ring-2 focus:ring-rose-400">
-                        <textarea id="test-quote" rows="4" placeholder="Your child's progress or experience with Sabrina..." required class="w-full px-6 py-4 rounded-2xl bg-white border border-rose-100 outline-none focus:ring-2 focus:ring-rose-400"></textarea>
+                        <textarea id="test-quote" rows="4" placeholder="Your child's progress or experience..." required class="w-full px-6 py-4 rounded-2xl bg-white border border-rose-100 outline-none focus:ring-2 focus:ring-rose-400"></textarea>
                     </div>
                     <div class="flex flex-col justify-end">
-                        <p class="text-xs text-slate-400 mb-4 italic">Your review will be shared with our community after a quick review. Thank you for your support!</p>
+                        <p class="text-xs text-slate-400 mb-4 italic">Your review will be shared with our community after a quick review.</p>
                         <button type="submit" id="test-submit-btn" class="w-full py-4 bg-rose-500 text-white rounded-full font-bold shadow-lg hover:bg-rose-600 transition">Submit Review ✨</button>
                     </div>
                 </form>
@@ -212,7 +212,7 @@
         </div>
     </section>
 
-    <!-- FAQ -->
+    <!-- FAQ / AI Assistant -->
     <section id="faq" class="py-24 px-6 bg-slate-50">
         <div class="max-w-4xl mx-auto bg-white p-12 rounded-[4rem] shadow-sm border border-indigo-50">
             <div class="text-center mb-10">
@@ -285,49 +285,93 @@
         <p>© 2026 Little Haven Music Studio (003685629-H). All Rights Reserved.</p>
     </footer>
 
+    <!-- Logic -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, signInAnonymously, onAuthStateChanged, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, doc, getDoc, setDoc, onSnapshot, collection, addDoc, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        // ✨ Get your FREE Gemini API key here: https://aistudio.google.com/app/apikey
-        // Replace "YOUR_API_KEY_HERE" with the key you just created.
-        const apiKey = "YOUR_API_KEY_HERE";
+        // ✨ 1. REPLACE THIS KEY WITH YOUR OWN GEMINI API KEY
+        const apiKey = "YOUR_NEW_API_KEY_HERE";
         
         const appId = typeof __app_id !== 'undefined' ? __app_id : 'little-haven-v1';
-        
         let db, auth;
         let isFirebaseActive = false;
         let testimonialsList = [];
 
+        // Initial default content
         let siteData = {
             heroTitle: "Where Every Note Finds a Home.",
             heroSubtitle: "Premium piano and theory lessons by expert instructors in Rawang and PJ areas.",
             teacherName: "Sabrina Chai",
             teacherCreds: "B.A. (Hons) Music • Associate Performance Diploma",
             teacherBio: "With years of dedicated teaching experience, Sabrina specializes in nurturing young talents through the ABRSM curriculum.",
-            teacherExperience: "An active contributor to the classical scene, Sabrina brings professional performance insights from her time working with the prestigious Bachfest Malaysia.",
+            teacherExperience: "An active contributor to the classical scene, Sabrina brings professional performance insights from her time working with the prestigious <strong>Bachfest Malaysia</strong>.",
             highlights: ["ABRSM Excellence", "Competition Mentor", "Early Childhood Specialist", "100% Distinction Track"],
             lessons: [
-                { title: "In-Home Piano Lessons", desc: "Personalized ABRSM-focused piano training in the comfort of your own home.", tag: "Practical", color: "pink" },
-                { title: "Piano Virtual Studio", desc: "High-quality, interactive online learning for remote students and young beginners.", tag: "Digital", color: "emerald" },
-                { title: "Early Childhood Music", desc: "Enjoy 45 mins of rhythm playing, percussion exploration, and music movement.", tag: "Discovery", color: "orange" },
-                { title: "Music Theory", desc: "Comprehensive Grade 1-8 intensive theory programs for strong foundations.", tag: "Academic", color: "indigo" }
+                { title: "In-Home Piano Lessons", desc: "Personalized ABRSM-focused piano training in the comfort of your own home.", tag: "Practical" },
+                { title: "Piano Virtual Studio", desc: "High-quality, interactive online learning for remote students and young beginners.", tag: "Digital" },
+                { title: "Early Childhood Music", desc: "Enjoy 45 mins of rhythm playing, percussion exploration, and music movement.", tag: "Discovery" },
+                { title: "Music Theory", desc: "Comprehensive Grade 1-8 intensive theory programs for strong foundations.", tag: "Academic" }
             ],
             testimonials: [
-                { author: "Mrs. Lim", quote: "Sabrina's patience and structured approach helped my daughter achieve Distinction in her ABRSM Grade 5." },
-                { author: "John D.", quote: "The theory lessons are engaging and easy to understand even for beginners." },
-                { author: "Sarah W.", quote: "Highly recommend the virtual studio! The tech setup is so clear it feels like she's in the room." }
+                { author: "Mrs. Lim", quote: "Sabrina's patience and structured approach helped my daughter achieve Distinction in her ABRSM Grade 5.", status: "approved" },
+                { author: "John D.", quote: "The theory lessons are engaging and easy to understand even for beginners.", status: "approved" },
+                { author: "Sarah W.", quote: "Highly recommend the virtual studio! The tech setup is so clear it feels like she's in the room.", status: "approved" }
             ]
         };
 
-        const safetyTimer = setTimeout(() => {
-            if (document.getElementById('loading').style.display !== 'none') {
-                render();
-                document.getElementById('loading').style.display = 'none';
-            }
-        }, 4000);
+        // UI Helpers
+        const hideLoading = () => {
+            const loader = document.getElementById('loading');
+            if (loader) loader.style.display = 'none';
+        };
 
+        // Safety timeout to ensure site shows even if Firebase is slow
+        setTimeout(hideLoading, 3000);
+
+        // --- AI FUNCTIONALITY ---
+        async function callGemini(userMessage, systemPrompt) {
+            const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
+            const response = await fetch(endpoint, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    contents: [{ parts: [{ text: `${systemPrompt}\n\nParent Question: ${userMessage}` }] }]
+                })
+            });
+            const data = await response.json();
+            return data.candidates?.[0]?.content?.parts?.[0]?.text || "I'm sorry, I couldn't process that.";
+        }
+
+        window.askAI = async () => {
+            const input = document.getElementById('ai-faq-input');
+            const btn = document.getElementById('ask-btn');
+            const area = document.getElementById('ai-faq-answer');
+            const q = input.value.trim();
+            if(!q) return;
+
+            if (!apiKey || apiKey.includes("AIzaSyD1dNuHzu2qu9kOEGpRB_0Ty5hA1829KN8")) {
+                area.classList.remove('hidden');
+                area.innerHTML = "<strong>⚠️ Note:</strong> Please add your Gemini API key to the code to enable the AI assistant.";
+                return;
+            }
+
+            btn.innerText = "...";
+            area.classList.remove('hidden');
+            area.innerHTML = "<span class='loading-dots font-bold text-indigo-500'>Assistant is thinking</span>";
+
+            try {
+                const res = await callGemini(q, "You are the AI assistant for Little Haven Music Studio, owned by Sabrina Chai. Provide warm, helpful, and concise answers about piano lessons, ABRSM exams, and music theory.");
+                area.innerHTML = `<strong>✨ Assistant:</strong> ${res}`;
+            } catch (err) {
+                area.innerHTML = "Sorry, I'm having trouble connecting. Please try again later.";
+            } finally {
+                btn.innerText = "Ask ✨";
+            }
+        };
+
+        // --- FIREBASE SYNC ---
         try {
             if (typeof __firebase_config !== 'undefined') {
                 const firebaseConfig = JSON.parse(__firebase_config);
@@ -345,137 +389,36 @@
                 };
                 initAuth();
 
-                onAuthStateChanged(auth, async (user) => {
+                onAuthStateChanged(auth, (user) => {
                     if (user) {
-                        // 1. Listen for site content
                         const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'content', 'v1');
                         onSnapshot(docRef, (snap) => {
-                            clearTimeout(safetyTimer);
                             if (snap.exists()) {
                                 siteData = { ...siteData, ...snap.data() };
                             } else {
                                 setDoc(docRef, siteData);
                             }
                             render();
-                            document.getElementById('loading').style.display = 'none';
-                        }, (err) => {
-                            render();
-                            document.getElementById('loading').style.display = 'none';
-                        });
+                            hideLoading();
+                        }, () => { render(); hideLoading(); });
 
-                        // 2. Listen for testimonials (Real-time DB sync)
                         const testRef = collection(db, 'artifacts', appId, 'public', 'data', 'testimonials');
                         onSnapshot(testRef, (snap) => {
                             testimonialsList = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-                            // Sort by newest first
-                            testimonialsList.sort((a, b) => {
-                                const timeA = a.at?.toMillis ? a.at.toMillis() : 0;
-                                const timeB = b.at?.toMillis ? b.at.toMillis() : 0;
-                                return timeB - timeA;
-                            });
-                            renderTestimonials(); // Update public view dynamically
+                            renderTestimonials();
                         });
                     }
                 });
             } else {
-                throw new Error("No config");
+                render();
+                hideLoading();
             }
         } catch (e) {
             render();
-            document.getElementById('loading').style.display = 'none';
+            hideLoading();
         }
 
-        async function callGemini(prompt, systemPrompt = "") {
-            let retries = 0;
-            while (retries < 5) {
-                try {
-                    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                            contents: [{ parts: [{ text: prompt }] }],
-                            systemInstruction: { parts: [{ text: systemPrompt }] }
-                        })
-                    });
-                    const data = await response.json();
-                    return data.candidates?.[0]?.content?.parts?.[0]?.text;
-                } catch (e) {
-                    retries++;
-                    await new Promise(r => setTimeout(r, Math.pow(2, retries) * 1000));
-                }
-            }
-        }
-// --- 1. The "Talk to Google" Function ---
-async function callGemini(userMessage, systemPrompt) {
-    const fullPrompt = `${systemPrompt}\n\nParent asks: ${userMessage}`;
-    const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
-
-    const response = await fetch(endpoint, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-            contents: [{ parts: [{ text: fullPrompt }] }]
-        })
-    });
-
-    const data = await response.json();
-
-    // This part extracts the actual text from the data
-    if (data.candidates && data.candidates[0].content) {
-        return data.candidates[0].content.parts[0].text;
-    }
-    throw new Error("Invalid response");
-}
-
-// --- 2. The "Button Click" Function (Outside the first one) ---
-window.askAI = async () => {
-    const input = document.getElementById('ai-faq-input');
-    const btn = document.getElementById('ask-btn');
-    const area = document.getElementById('ai-faq-answer');
-    const q = input.value.trim();
-    if(!q) return;
-
-    // Check if the API key is still the old/placeholder one
-    if (!apiKey || apiKey === "AIzaSyD1dNuHzu2qu9kOEGpRB_0Ty5hA1829KN8") {
-        area.classList.remove('hidden');
-        area.innerHTML = `<strong>⚠️ Action Required:</strong> Please paste your NEW API key into the code.`;
-        return;
-    }
-
-    btn.innerText = "...";
-    area.classList.remove('hidden');
-    area.innerHTML = "<span class='loading-dots'>Thinking</span>";
-
-    try {
-        // This calls the function above
-        const res = await callGemini(q, "You are Sabrina's Assistant at Little Haven Music. Be helpful, concise and warm.");
-        area.innerHTML = `<strong>✨ Assistant:</strong> ${res}`;
-    } catch (err) { 
-        area.innerHTML = "Error connecting to AI. Please check your API key."; 
-    } finally { 
-        btn.innerText = "Ask ✨"; 
-    }
-};
-
-        window.toggleTestimonialForm = () => {
-            const el = document.getElementById('testimonial-form-container');
-            el.classList.toggle('hidden');
-            if(!el.classList.contains('hidden')) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        };
-
-        function renderTestimonials() {
-            const approved = testimonialsList.filter(t => t.status === 'approved');
-            // Show DB testimonials, or fallback to default hardcoded ones if DB is empty
-            const displayList = approved.length > 0 ? approved : (siteData.testimonials || []);
-            
-            document.getElementById('testimonials-container').innerHTML = displayList.map(t => `
-                <div class="bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-sm card-hover flex flex-col justify-between">
-                    <p class="text-slate-500 italic mb-6 text-sm">"${t.quote}"</p>
-                    <p class="text-[10px] font-bold uppercase tracking-widest text-slate-800">— ${t.author}</p>
-                </div>
-            `).join('');
-        }
-
+        // --- RENDERING ---
         function render() {
             document.getElementById('hero-title').innerText = siteData.heroTitle;
             document.getElementById('hero-subtitle').innerText = siteData.heroSubtitle;
@@ -498,13 +441,31 @@ window.askAI = async () => {
                     <p class="text-sm text-slate-500">${l.desc}</p>
                 </div>
             `).join('');
-
-            renderTestimonials(); // Dynamically load testimonials
+            renderTestimonials();
         }
+
+        function renderTestimonials() {
+            const approved = testimonialsList.filter(t => t.status === 'approved');
+            const displayList = approved.length > 0 ? approved : siteData.testimonials;
+            
+            document.getElementById('testimonials-container').innerHTML = displayList.map(t => `
+                <div class="bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-sm card-hover flex flex-col justify-between">
+                    <p class="text-slate-500 italic mb-6 text-sm">"${t.quote}"</p>
+                    <p class="text-[10px] font-bold uppercase tracking-widest text-slate-800">— ${t.author}</p>
+                </div>
+            `).join('');
+        }
+
+        // Window-bound functions for HTML onclicks
+        window.toggleTestimonialForm = () => {
+            const el = document.getElementById('testimonial-form-container');
+            el.classList.toggle('hidden');
+            if(!el.classList.contains('hidden')) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        };
 
         window.submitTestimonial = async (e) => {
             e.preventDefault();
-            if(!isFirebaseActive || !auth.currentUser) return;
+            if(!isFirebaseActive) return;
             const btn = document.getElementById('test-submit-btn');
             btn.innerText = "Submitting...";
             try {
@@ -515,19 +476,16 @@ window.askAI = async () => {
                     status: 'pending'
                 });
                 document.getElementById('testimonial-form').reset();
-                toggleTestimonialForm();
+                window.toggleTestimonialForm();
                 btn.innerText = "Sent! ✨";
                 setTimeout(() => btn.innerText = "Submit Review ✨", 3000);
-            } catch (err) {
-                btn.innerText = "Error. Try again.";
-            }
+            } catch (err) { btn.innerText = "Error. Try again."; }
         };
 
         window.handleInquiry = async (e) => {
             e.preventDefault();
-            if(!isFirebaseActive || !auth.currentUser) return;
+            if(!isFirebaseActive) return;
             const btn = e.target.querySelector('button[type="submit"]');
-            const originalText = btn.innerText;
             btn.innerText = "Sending...";
             try {
                 await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'inquiries'), {
@@ -540,11 +498,8 @@ window.askAI = async () => {
                 });
                 e.target.reset();
                 btn.innerText = "Inquiry Sent! ✨";
-                setTimeout(() => btn.innerText = originalText, 3000);
-            } catch (err) {
-                btn.innerText = "Error. Try WhatsApp.";
-                setTimeout(() => btn.innerText = originalText, 3000);
-            }
+                setTimeout(() => btn.innerText = "Send Inquiry", 3000);
+            } catch (err) { btn.innerText = "Error. Try WhatsApp."; }
         };
     </script>
 </body>
