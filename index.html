@@ -405,49 +405,57 @@
                 }
             }
         }
+// --- 1. The "Talk to Google" Function ---
 async function callGemini(userMessage, systemPrompt) {
-    // We combine your instructions with the user's question so the AI knows how to act
     const fullPrompt = `${systemPrompt}\n\nParent asks: ${userMessage}`;
-    
-    // The official Google Gemini endpoint
     const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
 
     const response = await fetch(endpoint, {
         method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-            contents: [{
-                parts: [{ text: fullPrompt }]
-            }]
+            contents: [{ parts: [{ text: fullPrompt }] }]
         })
     });
 
     const data = await response.json();
-        window.askAI = async () => {
-            const input = document.getElementById('ai-faq-input');
-            const btn = document.getElementById('ask-btn');
-            const area = document.getElementById('ai-faq-answer');
-            const q = input.value.trim();
-            if(!q) return;
 
-            // Protection message if the API key hasn't been added yet
-            if (!apiKey || apiKey === "AIzaSyD1dNuHzu2qu9kOEGpRB_0Ty5hA1829KN8") {
-                area.classList.remove('hidden');
-                area.innerHTML = `<strong>⚠️ Action Required:</strong> To activate the AI Assistant on your live website, please paste your free Gemini API key into the code. Get it at <a href="https://aistudio.google.com/app/apikey" target="_blank" class="text-indigo-500 underline font-bold">Google AI Studio</a>.`;
-                return;
-            }
+    // This part extracts the actual text from the data
+    if (data.candidates && data.candidates[0].content) {
+        return data.candidates[0].content.parts[0].text;
+    }
+    throw new Error("Invalid response");
+}
 
-            btn.innerText = "...";
-            area.classList.remove('hidden');
-            area.innerHTML = "<span class='loading-dots'>Thinking</span>";
-            try {
-                const res = await callGemini(q, "You are Sabrina's Assistant at Little Haven Music. Be helpful, concise and warm.");
-                area.innerHTML = `<strong>✨ Assistant:</strong> ${res}`;
-            } catch { area.innerHTML = "Error connecting to AI. Please check your API key."; }
-            finally { btn.innerText = "Ask ✨"; }
-        };
+// --- 2. The "Button Click" Function (Outside the first one) ---
+window.askAI = async () => {
+    const input = document.getElementById('ai-faq-input');
+    const btn = document.getElementById('ask-btn');
+    const area = document.getElementById('ai-faq-answer');
+    const q = input.value.trim();
+    if(!q) return;
+
+    // Check if the API key is still the old/placeholder one
+    if (!apiKey || apiKey === "AIzaSyD1dNuHzu2qu9kOEGpRB_0Ty5hA1829KN8") {
+        area.classList.remove('hidden');
+        area.innerHTML = `<strong>⚠️ Action Required:</strong> Please paste your NEW API key into the code.`;
+        return;
+    }
+
+    btn.innerText = "...";
+    area.classList.remove('hidden');
+    area.innerHTML = "<span class='loading-dots'>Thinking</span>";
+
+    try {
+        // This calls the function above
+        const res = await callGemini(q, "You are Sabrina's Assistant at Little Haven Music. Be helpful, concise and warm.");
+        area.innerHTML = `<strong>✨ Assistant:</strong> ${res}`;
+    } catch (err) { 
+        area.innerHTML = "Error connecting to AI. Please check your API key."; 
+    } finally { 
+        btn.innerText = "Ask ✨"; 
+    }
+};
 
         window.toggleTestimonialForm = () => {
             const el = document.getElementById('testimonial-form-container');
