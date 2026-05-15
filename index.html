@@ -152,15 +152,14 @@
             <div class="flex flex-col md:flex-row items-center gap-16">
                 <div class="flex-1">
                     <div class="img-container aspect-[4/5] bg-white relative">
-                        <img src="PG_Sabrina-25_TU.jpg" alt="Sabrina Chai" class="w-full h-full object-cover">
+                        <img src="https://images.unsplash.com/photo-1598488035139-bdbb2231ce04?auto=format&fit=crop&q=80&w=800" alt="Sabrina Chai" class="w-full h-full object-cover">
                     </div>
                 </div>
                 <div class="flex-1">
                     <h4 class="text-emerald-500 font-bold uppercase tracking-widest text-sm mb-4">Lead Instructor</h4>
                     <h2 id="teacher-name" class="text-5xl font-bold text-slate-800 mb-2 italic">Sabrina Chai</h2>
                     <p id="teacher-creds" class="text-emerald-600 font-bold text-sm mb-8 tracking-wide">
-                         M.M.Ed.,B.A. (Hons) Music • Associate Performance Diploma 
-                       
+                         B.A. (Hons) Music • Associate Performance Diploma
                     </p>
                     <div class="space-y-6 text-slate-600 text-lg leading-relaxed">
                         <p id="teacher-bio">With years of dedicated teaching experience, Sabrina specializes in nurturing young talents through the ABRSM curriculum.</p>
@@ -241,16 +240,43 @@
                 <h2 class="text-4xl font-bold text-slate-800 italic">Begin Your Journey</h2>
             </div>
 
-            <div class="max-w-md mx-auto">
-                <a href="https://wa.me/60176516750?text=I%20want%20to%20inquiry%20piano%2F%20music%20enrichment%20lessons." target="_blank" class="bg-white p-10 rounded-[3rem] border border-orange-100 shadow-sm flex items-center gap-8 hover:shadow-lg transition-all hover:-translate-y-1">
-                    <div class="w-16 h-16 bg-orange-50 rounded-2xl flex items-center justify-center text-orange-400 flex-shrink-0">
-                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/></svg>
-                    </div>
-                    <div>
-                        <p class="text-sm font-bold uppercase tracking-widest text-slate-400 mb-2">Message us on WhatsApp</p>
-                        <span class="text-2xl font-bold text-slate-800">+60 17-651 6750</span>
-                    </div>
-                </a>
+            <div class="grid md:grid-cols-2 gap-12 items-start">
+                <div class="space-y-6">
+                    <a href="https://wa.me/60176516750?text=I%20want%20to%20inquiry%20piano%2F%20music%20enrichment%20lessons." target="_blank" class="bg-white p-10 rounded-[3rem] border border-orange-100 shadow-sm flex items-center gap-8 hover:shadow-lg transition-all hover:-translate-y-1">
+                        <div class="w-16 h-16 bg-orange-50 rounded-2xl flex items-center justify-center text-orange-400 flex-shrink-0">
+                            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/></svg>
+                        </div>
+                        <div>
+                            <p class="text-sm font-bold uppercase tracking-widest text-slate-400 mb-2">Message us on WhatsApp</p>
+                            <span class="text-2xl font-bold text-slate-800">+60 17-651 6750</span>
+                        </div>
+                    </a>
+                </div>
+
+                <div class="bg-white p-8 md:p-10 rounded-[3.5rem] shadow-xl border border-orange-50">
+                    <form onsubmit="handleInquiry(event)" class="space-y-5">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                            <input type="text" id="inq-name" placeholder="Name" required class="w-full px-6 py-4 rounded-2xl bg-slate-50 border border-slate-100 outline-none focus:ring-2 focus:ring-orange-400">
+                            <input type="tel" id="inq-phone" placeholder="Phone" required class="w-full px-6 py-4 rounded-2xl bg-slate-50 border border-slate-100 outline-none focus:ring-2 focus:ring-orange-400">
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                            <select id="inq-area" class="w-full px-6 py-4 rounded-2xl bg-slate-50 border border-slate-100 outline-none">
+                                <option>Anggun City, Rawang</option>
+                                <option>Kota Emerald, Rawang</option>
+                                <option>Bandar Utama, PJ</option>
+                                <option>Other (Online)</option>
+                            </select>
+                            <select id="inq-type" class="w-full px-6 py-4 rounded-2xl bg-slate-50 border border-slate-100 outline-none">
+                                <option>In-Home Piano Lessons</option>
+                                <option>Piano Virtual Studio</option>
+                                <option>Early Childhood Music</option>
+                                <option>Music Theory</option>
+                            </select>
+                        </div>
+                        <textarea id="inq-msg" rows="4" placeholder="Your Message (Optional)..." class="w-full px-6 py-4 rounded-2xl bg-slate-50 border border-slate-100 outline-none focus:ring-2 focus:ring-orange-400"></textarea>
+                        <button type="submit" class="w-full py-4 bg-gradient-to-r from-orange-400 to-rose-400 text-white rounded-full font-bold shadow-lg hover:opacity-90 transition">Send Inquiry</button>
+                    </form>
+                </div>
             </div>
         </div>
     </section>
@@ -262,13 +288,17 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, signInAnonymously, onAuthStateChanged, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, doc, getDoc, setDoc, onSnapshot, collection, addDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getFirestore, doc, getDoc, setDoc, onSnapshot, collection, addDoc, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        const apiKey = "AIzaSyAX2T5onTSCT39Rddk8sIAEibAwVGRyDeA";
+        // ✨ Get your FREE Gemini API key here: https://aistudio.google.com/app/apikey
+        // Replace "YOUR_API_KEY_HERE" with the key you just created.
+        const apiKey = "YOUR_API_KEY_HERE";
+        
         const appId = typeof __app_id !== 'undefined' ? __app_id : 'little-haven-v1';
         
         let db, auth;
         let isFirebaseActive = false;
+        let testimonialsList = [];
 
         let siteData = {
             heroTitle: "Where Every Note Finds a Home.",
@@ -317,6 +347,7 @@
 
                 onAuthStateChanged(auth, async (user) => {
                     if (user) {
+                        // 1. Listen for site content
                         const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'content', 'v1');
                         onSnapshot(docRef, (snap) => {
                             clearTimeout(safetyTimer);
@@ -330,6 +361,19 @@
                         }, (err) => {
                             render();
                             document.getElementById('loading').style.display = 'none';
+                        });
+
+                        // 2. Listen for testimonials (Real-time DB sync)
+                        const testRef = collection(db, 'artifacts', appId, 'public', 'data', 'testimonials');
+                        onSnapshot(testRef, (snap) => {
+                            testimonialsList = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+                            // Sort by newest first
+                            testimonialsList.sort((a, b) => {
+                                const timeA = a.at?.toMillis ? a.at.toMillis() : 0;
+                                const timeB = b.at?.toMillis ? b.at.toMillis() : 0;
+                                return timeB - timeA;
+                            });
+                            renderTestimonials(); // Update public view dynamically
                         });
                     }
                 });
@@ -368,13 +412,21 @@
             const area = document.getElementById('ai-faq-answer');
             const q = input.value.trim();
             if(!q) return;
+
+            // Protection message if the API key hasn't been added yet
+            if (!apiKey || apiKey === "YOUR_API_KEY_HERE") {
+                area.classList.remove('hidden');
+                area.innerHTML = `<strong>⚠️ Action Required:</strong> To activate the AI Assistant on your live website, please paste your free Gemini API key into the code. Get it at <a href="https://aistudio.google.com/app/apikey" target="_blank" class="text-indigo-500 underline font-bold">Google AI Studio</a>.`;
+                return;
+            }
+
             btn.innerText = "...";
             area.classList.remove('hidden');
             area.innerHTML = "<span class='loading-dots'>Thinking</span>";
             try {
                 const res = await callGemini(q, "You are Sabrina's Assistant at Little Haven Music. Be helpful, concise and warm.");
                 area.innerHTML = `<strong>✨ Assistant:</strong> ${res}`;
-            } catch { area.innerHTML = "Error connecting."; }
+            } catch { area.innerHTML = "Error connecting to AI. Please check your API key."; }
             finally { btn.innerText = "Ask ✨"; }
         };
 
@@ -383,6 +435,19 @@
             el.classList.toggle('hidden');
             if(!el.classList.contains('hidden')) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
         };
+
+        function renderTestimonials() {
+            const approved = testimonialsList.filter(t => t.status === 'approved');
+            // Show DB testimonials, or fallback to default hardcoded ones if DB is empty
+            const displayList = approved.length > 0 ? approved : (siteData.testimonials || []);
+            
+            document.getElementById('testimonials-container').innerHTML = displayList.map(t => `
+                <div class="bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-sm card-hover flex flex-col justify-between">
+                    <p class="text-slate-500 italic mb-6 text-sm">"${t.quote}"</p>
+                    <p class="text-[10px] font-bold uppercase tracking-widest text-slate-800">— ${t.author}</p>
+                </div>
+            `).join('');
+        }
 
         function render() {
             document.getElementById('hero-title').innerText = siteData.heroTitle;
@@ -407,12 +472,7 @@
                 </div>
             `).join('');
 
-            document.getElementById('testimonials-container').innerHTML = (siteData.testimonials || []).map(t => `
-                <div class="bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-sm card-hover flex flex-col justify-between">
-                    <p class="text-slate-500 italic mb-6 text-sm">"${t.quote}"</p>
-                    <p class="text-[10px] font-bold uppercase tracking-widest text-slate-800">— ${t.author}</p>
-                </div>
-            `).join('');
+            renderTestimonials(); // Dynamically load testimonials
         }
 
         window.submitTestimonial = async (e) => {
@@ -433,6 +493,30 @@
                 setTimeout(() => btn.innerText = "Submit Review ✨", 3000);
             } catch (err) {
                 btn.innerText = "Error. Try again.";
+            }
+        };
+
+        window.handleInquiry = async (e) => {
+            e.preventDefault();
+            if(!isFirebaseActive || !auth.currentUser) return;
+            const btn = e.target.querySelector('button[type="submit"]');
+            const originalText = btn.innerText;
+            btn.innerText = "Sending...";
+            try {
+                await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'inquiries'), {
+                    name: document.getElementById('inq-name').value,
+                    phone: document.getElementById('inq-phone').value,
+                    area: document.getElementById('inq-area').value,
+                    type: document.getElementById('inq-type').value,
+                    message: document.getElementById('inq-msg').value,
+                    at: new Date()
+                });
+                e.target.reset();
+                btn.innerText = "Inquiry Sent! ✨";
+                setTimeout(() => btn.innerText = originalText, 3000);
+            } catch (err) {
+                btn.innerText = "Error. Try WhatsApp.";
+                setTimeout(() => btn.innerText = originalText, 3000);
             }
         };
     </script>
