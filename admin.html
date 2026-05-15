@@ -3,340 +3,313 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LHM | Studio Dashboard</title>
+    <title>Little Haven Studio | Admin Dashboard</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500;700&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Inter', sans-serif; background-color: #f8fafc; }
-        h1, h2, h3 { font-family: 'Quicksand', sans-serif; }
-        .sync-pulse { animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
-        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: .5; } }
-        
-        .shake { animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both; }
-        @keyframes shake {
-            10%, 90% { transform: translate3d(-1px, 0, 0); }
-            20%, 80% { transform: translate3d(2px, 0, 0); }
-            30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
-            40%, 60% { transform: translate3d(4px, 0, 0); }
-        }
+        body { font-family: 'Quicksand', sans-serif; background-color: #f8fafc; }
     </style>
 </head>
-<body class="text-slate-800">
+<body class="text-slate-800 h-screen flex flex-col">
 
-    <!-- PASSWORD GATE -->
-    <div id="password-gate" class="fixed inset-0 z-[100] bg-slate-50 flex items-center justify-center p-6">
-        <div class="w-full max-w-md">
-            <div class="bg-white rounded-[2.5rem] shadow-2xl border border-slate-100 p-10 text-center">
-                <div class="w-16 h-16 bg-pink-500 rounded-2xl flex items-center justify-center text-white font-bold text-3xl mx-auto mb-6 shadow-lg shadow-pink-100">H</div>
-                <h2 class="text-2xl font-bold text-slate-800 mb-2">Studio Access</h2>
-                <p class="text-slate-400 text-sm mb-8">Enter the master password to manage your studio content and inquiries.</p>
-                
-                <form id="auth-form" class="space-y-4">
-                    <div id="input-container">
-                        <input 
-                            type="password" 
-                            id="gate-pass" 
-                            placeholder="Master Password" 
-                            class="w-full px-6 py-4 rounded-2xl bg-slate-50 border border-slate-100 focus:ring-4 focus:ring-pink-100 focus:border-pink-400 outline-none transition-all text-center font-bold tracking-widest"
-                        >
-                    </div>
-                    <p id="gate-error" class="text-rose-500 text-xs font-bold hidden uppercase tracking-widest">Incorrect Password</p>
-                    <button type="submit" class="w-full py-4 bg-slate-900 text-white rounded-2xl font-bold hover:bg-slate-800 transition-transform active:scale-95 shadow-xl shadow-slate-200">
-                        Unlock Dashboard ✨
-                    </button>
-                </form>
+    <!-- Loading Overlay -->
+    <div id="loading" class="fixed inset-0 bg-white z-[100] flex flex-col items-center justify-center font-bold text-slate-400">
+        <div class="mb-4 text-emerald-400 animate-pulse text-2xl">Connecting to Database...</div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="fixed top-6 right-6 transform translate-x-full transition-transform duration-300 z-[300] bg-white border-l-4 shadow-2xl rounded-xl px-6 py-4 flex items-center gap-4">
+        <span id="toast-msg" class="text-slate-700 font-bold text-sm">Success!</span>
+    </div>
+
+    <!-- Login View -->
+    <div id="login-view" class="flex-1 flex items-center justify-center p-6">
+        <div class="bg-white p-10 rounded-[2rem] shadow-xl w-full max-w-md border border-slate-100">
+            <div class="w-16 h-16 bg-emerald-50 text-emerald-500 rounded-2xl flex items-center justify-center mb-6 mx-auto">
+                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
             </div>
+            <h2 class="text-2xl font-bold text-center mb-2">Studio Portal</h2>
+            <p class="text-center text-slate-500 text-sm mb-8">Enter your secure admin password.</p>
+            
+            <input type="password" id="admin-pass" class="w-full px-6 py-4 rounded-xl bg-slate-50 border border-slate-200 outline-none focus:ring-2 focus:ring-emerald-400 mb-6 transition" placeholder="Password..." onkeypress="if(event.key === 'Enter') doLogin()">
+            
+            <button onclick="doLogin()" class="w-full py-4 bg-slate-800 text-white font-bold rounded-xl shadow-lg hover:bg-slate-700 transition">
+                Secure Login
+            </button>
         </div>
     </div>
 
-    <!-- MAIN DASHBOARD CONTENT (Hidden by default) -->
-    <div id="dashboard-wrapper" class="hidden">
-        <nav class="bg-white border-b border-slate-200 px-6 py-4 sticky top-0 z-50">
-            <div class="max-w-7xl mx-auto flex justify-between items-center">
-                <div class="flex items-center gap-3">
-                    <div class="w-8 h-8 bg-pink-500 rounded-lg flex items-center justify-center text-white font-bold text-xl">H</div>
-                    <h1 class="text-xl font-bold tracking-tight">Studio <span class="text-slate-400 font-medium">Dashboard</span></h1>
+    <!-- Dashboard View (Hidden by default) -->
+    <div id="dashboard-view" class="hidden flex-1 flex flex-col h-full overflow-hidden">
+        <!-- Header -->
+        <header class="bg-white shadow-sm border-b border-slate-100 px-8 py-4 flex justify-between items-center z-10 shrink-0">
+            <div class="flex items-center gap-4">
+                <div class="w-10 h-10 bg-pink-50 rounded-xl flex items-center justify-center text-pink-400">
+                    <svg viewBox="0 0 100 100" class="w-6 h-6" fill="currentColor"><path d="M20 30 L 80 30 L 80 72 C 80 85, 45 85, 45 72 L 45 52 L 20 52 Z" /></svg>
                 </div>
-                <div class="flex items-center gap-4">
-                    <div id="sync-indicator" class="hidden flex items-center gap-2 text-[10px] font-bold text-emerald-500 uppercase tracking-widest">
-                        <span class="w-2 h-2 bg-emerald-500 rounded-full sync-pulse"></span>
-                        Live Sync: <span id="auth-status">Connecting...</span>
-                    </div>
-                    <button onclick="logout()" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 rounded-lg text-xs font-bold transition">Lock</button>
+                <div>
+                    <h1 class="font-bold text-lg leading-tight">Little Haven</h1>
+                    <p class="text-[10px] text-slate-400 font-bold uppercase tracking-widest">Management Dashboard</p>
                 </div>
             </div>
-        </nav>
+            <button onclick="doLogout()" class="text-sm font-bold text-slate-500 hover:text-rose-500 transition px-4 py-2 rounded-lg hover:bg-rose-50">Logout</button>
+        </header>
 
-        <div id="status-banner" class="bg-amber-50 border-b border-amber-100 p-3 flex items-center justify-center gap-3 text-amber-700 text-xs font-bold uppercase tracking-wide hidden">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
-            <span id="status-message">Connection issue detected...</span>
+        <!-- Main Content -->
+        <div class="flex-1 overflow-y-auto p-8">
+            <div class="max-w-5xl mx-auto">
+                <!-- New Inquiries Section -->
+                <div class="mb-8">
+                    <h2 class="text-3xl font-bold text-slate-800 mb-2">Student Inquiries</h2>
+                    <p class="text-slate-500">Review new student sign-ups and contact requests.</p>
+                </div>
+
+                <div class="bg-white p-6 rounded-[2rem] shadow-sm border border-orange-100 mb-12">
+                    <div class="flex justify-between items-center mb-6">
+                        <h3 class="font-bold text-orange-500 flex items-center gap-2">
+                            <span class="w-2 h-2 rounded-full bg-orange-500"></span> Recent Inquiries
+                        </h3>
+                        <span id="inquiry-count" class="bg-orange-50 text-orange-500 text-xs font-bold px-3 py-1 rounded-full">0</span>
+                    </div>
+                    <div id="inquiry-list" class="space-y-4 max-h-[400px] overflow-y-auto pr-2">
+                        <!-- Injected via JS -->
+                    </div>
+                </div>
+
+                <!-- Existing Testimonials Section -->
+                <div class="mb-10">
+                    <h2 class="text-3xl font-bold text-slate-800 mb-2">Testimonials & Reviews</h2>
+                    <p class="text-slate-500">Approve parent submissions before they go live on your website.</p>
+                </div>
+
+                <div class="grid lg:grid-cols-2 gap-12 items-start">
+                    <!-- Pending Column -->
+                    <div class="bg-white p-6 rounded-[2rem] shadow-sm border border-rose-100">
+                        <div class="flex justify-between items-center mb-6">
+                            <h3 class="font-bold text-rose-500 flex items-center gap-2">
+                                <span class="w-2 h-2 rounded-full bg-rose-500"></span> Pending Approval
+                            </h3>
+                            <span id="pending-count" class="bg-rose-50 text-rose-500 text-xs font-bold px-3 py-1 rounded-full">0</span>
+                        </div>
+                        <div id="pending-list" class="space-y-4 min-h-[100px]">
+                            <!-- Injected via JS -->
+                        </div>
+                    </div>
+
+                    <!-- Approved Column -->
+                    <div class="bg-white p-6 rounded-[2rem] shadow-sm border border-emerald-100">
+                        <div class="flex justify-between items-center mb-6">
+                            <h3 class="font-bold text-emerald-500 flex items-center gap-2">
+                                <span class="w-2 h-2 rounded-full bg-emerald-500"></span> Live on Website
+                            </h3>
+                            <span id="approved-count" class="bg-emerald-50 text-emerald-500 text-xs font-bold px-3 py-1 rounded-full">0</span>
+                        </div>
+                        <div id="approved-list" class="space-y-4 min-h-[100px]">
+                            <!-- Injected via JS -->
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-
-        <main class="max-w-7xl mx-auto p-6 grid grid-cols-1 lg:grid-cols-12 gap-8">
-            <!-- Sidebar Navigation -->
-            <div class="lg:col-span-3 space-y-2">
-                <button onclick="showTab('content')" class="tab-btn w-full text-left px-4 py-3 rounded-xl font-bold text-sm bg-pink-50 text-pink-600 border border-pink-100" data-tab="content">Site Content</button>
-                <button onclick="showTab('inquiries')" class="tab-btn w-full text-left px-4 py-3 rounded-xl font-bold text-sm text-slate-600 hover:bg-slate-100" data-tab="inquiries">Inquiries</button>
-                <button onclick="showTab('testimonials')" class="tab-btn w-full text-left px-4 py-3 rounded-xl font-bold text-sm text-slate-600 hover:bg-slate-100" data-tab="testimonials">Testimonials</button>
-            </div>
-
-            <!-- Main Workspace -->
-            <div class="lg:col-span-9">
-                <!-- Section: Content Editor -->
-                <div id="tab-content" class="tab-pane space-y-6">
-                    <div class="bg-white rounded-3xl border border-slate-200 p-8 shadow-sm">
-                        <h2 class="text-2xl font-bold mb-6 italic">Hero Section</h2>
-                        <div class="space-y-4">
-                            <div>
-                                <label class="block text-xs font-bold text-slate-400 uppercase mb-2">Main Title</label>
-                                <input type="text" id="edit-hero-title" class="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-100 focus:ring-2 focus:ring-pink-400 outline-none">
-                            </div>
-                            <div>
-                                <label class="block text-xs font-bold text-slate-400 uppercase mb-2">Subtitle</label>
-                                <textarea id="edit-hero-subtitle" rows="2" class="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-100 focus:ring-2 focus:ring-pink-400 outline-none"></textarea>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="bg-white rounded-3xl border border-slate-200 p-8 shadow-sm">
-                        <h2 class="text-2xl font-bold mb-6 italic">Instructor Profile</h2>
-                        <div class="space-y-4">
-                            <div class="grid grid-cols-2 gap-4">
-                                <div>
-                                    <label class="block text-xs font-bold text-slate-400 uppercase mb-2">Name</label>
-                                    <input type="text" id="edit-teacher-name" class="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-100">
-                                </div>
-                                <div>
-                                    <label class="block text-xs font-bold text-slate-400 uppercase mb-2">Credentials</label>
-                                    <input type="text" id="edit-teacher-creds" class="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-100">
-                                </div>
-                            </div>
-                            <div>
-                                <label class="block text-xs font-bold text-slate-400 uppercase mb-2">Bio</label>
-                                <textarea id="edit-teacher-bio" rows="3" class="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-100"></textarea>
-                            </div>
-                            <div>
-                                <label class="block text-xs font-bold text-slate-400 uppercase mb-2">Experience (HTML)</label>
-                                <textarea id="edit-teacher-experience" rows="3" class="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-100"></textarea>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="flex justify-end">
-                        <button onclick="saveContent()" class="px-8 py-4 bg-slate-800 text-white rounded-2xl font-bold shadow-xl hover:bg-slate-700 transition">Update Website ✨</button>
-                    </div>
-                </div>
-
-                <!-- Section: Inquiries -->
-                <div id="tab-inquiries" class="tab-pane hidden space-y-6">
-                    <div class="flex items-center justify-between">
-                        <h2 class="text-2xl font-bold">Student Inquiries</h2>
-                        <span id="inquiry-count" class="bg-slate-200 px-3 py-1 rounded-full text-xs font-bold">0 Total</span>
-                    </div>
-                    <div id="inquiries-list" class="grid gap-4">
-                        <div class="p-8 bg-white rounded-3xl border border-slate-100 text-slate-400 text-center italic">Loading leads...</div>
-                    </div>
-                </div>
-
-                <!-- Section: Testimonials -->
-                <div id="tab-testimonials" class="tab-pane hidden space-y-6">
-                    <h2 class="text-2xl font-bold">Review Moderation</h2>
-                    <div id="testimonial-list" class="grid grid-cols-1 gap-4 text-center">
-                        <div class="p-8 bg-white rounded-3xl border border-slate-100 text-slate-400 italic">Checking reviews...</div>
-                    </div>
-                </div>
-            </div>
-        </main>
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, signInAnonymously, onAuthStateChanged, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, doc, getDoc, setDoc, updateDoc, onSnapshot, collection, deleteDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getFirestore, doc, getDoc, setDoc, onSnapshot, collection, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'little-haven';
-        let db, auth, user;
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'little-haven-v1';
+        
+        let db, auth;
+        let testimonialsList = [];
+        let inquiriesList = [];
 
-        // --- PASSWORD GATE LOGIC ---
-        const MASTER_PASS = "lhm2024";
-        const SESSION_KEY = "lhm_studio_auth";
-        const gate = document.getElementById('password-gate');
-        const wrapper = document.getElementById('dashboard-wrapper');
-        const authForm = document.getElementById('auth-form');
-        const passInput = document.getElementById('gate-pass');
-        const inputCont = document.getElementById('input-container');
-        const gateError = document.getElementById('gate-error');
+        // Safety timer to remove loading screen if DB fails
+        const safetyTimer = setTimeout(() => {
+            document.getElementById('loading').style.display = 'none';
+        }, 4000);
 
-        authForm.addEventListener('submit', (e) => {
-            e.preventDefault();
-            if (passInput.value === MASTER_PASS) {
-                sessionStorage.setItem(SESSION_KEY, "true");
-                unlock();
+        // Initialize Firebase
+        try {
+            if (typeof __firebase_config !== 'undefined') {
+                const firebaseConfig = JSON.parse(__firebase_config);
+                const app = initializeApp(firebaseConfig);
+                auth = getAuth(app);
+                db = getFirestore(app);
+
+                const initAuth = async () => {
+                    if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                        await signInWithCustomToken(auth, __initial_auth_token);
+                    } else {
+                        await signInAnonymously(auth);
+                    }
+                };
+                initAuth();
+
+                onAuthStateChanged(auth, async (user) => {
+                    if (user) {
+                        clearTimeout(safetyTimer);
+                        document.getElementById('loading').style.display = 'none';
+                        
+                        // Listen for Real-time Testimonial Data
+                        const testRef = collection(db, 'artifacts', appId, 'public', 'data', 'testimonials');
+                        onSnapshot(testRef, (snap) => {
+                            testimonialsList = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+                            testimonialsList.sort((a, b) => {
+                                const timeA = a.at?.toMillis ? a.at.toMillis() : 0;
+                                const timeB = b.at?.toMillis ? b.at.toMillis() : 0;
+                                return timeB - timeA; // Newest first
+                            });
+                            
+                            // Update UI if user is logged in
+                            if (!document.getElementById('dashboard-view').classList.contains('hidden')) {
+                                renderLists();
+                            }
+                        }, (err) => {
+                            console.error("Failed to load reviews:", err);
+                        });
+
+                        // Listen for Real-time Inquiries Data
+                        const inqRef = collection(db, 'artifacts', appId, 'public', 'data', 'inquiries');
+                        onSnapshot(inqRef, (snap) => {
+                            inquiriesList = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+                            inquiriesList.sort((a, b) => {
+                                const timeA = a.at?.toMillis ? a.at.toMillis() : 0;
+                                const timeB = b.at?.toMillis ? b.at.toMillis() : 0;
+                                return timeB - timeA; // Newest first
+                            });
+                            
+                            if (!document.getElementById('dashboard-view').classList.contains('hidden')) {
+                                renderLists();
+                            }
+                        });
+                    }
+                });
             } else {
-                passInput.value = "";
-                gateError.classList.remove('hidden');
-                inputCont.classList.add('shake');
-                setTimeout(() => inputCont.classList.remove('shake'), 500);
+                throw new Error("No config");
             }
-        });
-
-        function unlock() {
-            gate.classList.add('hidden');
-            wrapper.classList.remove('hidden');
-            initFirebase();
+        } catch (e) {
+            document.getElementById('loading').style.display = 'none';
+            console.error("Firebase setup failed:", e);
         }
 
-        window.logout = () => {
-            sessionStorage.removeItem(SESSION_KEY);
-            location.reload();
+        // --- UI & Logic Functions ---
+
+        window.showToast = (msg, isError = false) => {
+            const t = document.getElementById('toast');
+            document.getElementById('toast-msg').innerText = msg;
+            t.className = `fixed top-6 right-6 transform transition-transform duration-300 z-[300] bg-white border-l-4 shadow-2xl rounded-xl px-6 py-4 flex items-center gap-4 ${isError ? 'border-rose-500' : 'border-emerald-500'}`;
+            t.classList.remove('translate-x-full');
+            setTimeout(() => t.classList.add('translate-x-full'), 3000);
         };
 
-        // Check session on load
-        if (sessionStorage.getItem(SESSION_KEY) === "true") {
-            unlock();
-        }
-
-        // --- FIREBASE LOGIC ---
-        async function initFirebase() {
-            const firebaseConfig = JSON.parse(__firebase_config);
-            const app = initializeApp(firebaseConfig);
-            auth = getAuth(app);
-            db = getFirestore(app);
-
-            onAuthStateChanged(auth, (u) => {
-                if (u) {
-                    user = u;
-                    document.getElementById('auth-status').innerText = user.uid.substring(0,8);
-                    document.getElementById('sync-indicator').classList.remove('hidden');
-                    loadData();
-                } else {
-                    const initAuth = async () => {
-                        if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
-                            await signInWithCustomToken(auth, __initial_auth_token);
-                        } else {
-                            await signInAnonymously(auth);
-                        }
-                    };
-                    initAuth();
-                }
-            });
-        }
-
-        window.showTab = (tabId) => {
-            document.querySelectorAll('.tab-pane').forEach(el => el.classList.add('hidden'));
-            document.querySelectorAll('.tab-btn').forEach(btn => {
-                btn.className = "tab-btn w-full text-left px-4 py-3 rounded-xl font-bold text-sm text-slate-600 hover:bg-slate-100";
-            });
-            
-            const activeBtn = document.querySelector(`[data-tab="${tabId}"]`);
-            activeBtn.className = "tab-btn w-full text-left px-4 py-3 rounded-xl font-bold text-sm bg-pink-50 text-pink-600 border border-pink-100";
-            document.getElementById(`tab-${tabId}`).classList.remove('hidden');
+        window.doLogin = () => {
+            const pass = document.getElementById('admin-pass').value;
+            // Kept identical to the main website's password
+            if(pass === "studio88") {
+                document.getElementById('login-view').classList.add('hidden');
+                document.getElementById('dashboard-view').classList.remove('hidden');
+                document.getElementById('admin-pass').value = ""; // Clear password field
+                renderLists();
+                showToast("Logged in successfully!");
+            } else {
+                showToast("Incorrect password.", true);
+            }
         };
 
-        function loadData() {
-            // Site Content
-            const contentRef = doc(db, 'artifacts', appId, 'public', 'data', 'content', 'v1');
-            onSnapshot(contentRef, (snap) => {
-                if (snap.exists()) {
-                    const data = snap.data();
-                    document.getElementById('edit-hero-title').value = data.heroTitle || "";
-                    document.getElementById('edit-hero-subtitle').value = data.heroSubtitle || "";
-                    document.getElementById('edit-teacher-name').value = data.teacherName || "";
-                    document.getElementById('edit-teacher-creds').value = data.teacherCreds || "";
-                    document.getElementById('edit-teacher-bio').value = data.teacherBio || "";
-                    document.getElementById('edit-teacher-experience').value = data.teacherExperience || "";
-                }
-            });
+        window.doLogout = () => {
+            document.getElementById('dashboard-view').classList.add('hidden');
+            document.getElementById('login-view').classList.remove('hidden');
+            showToast("Logged out successfully.");
+        };
 
-            // Inquiries
-            const inqRef = collection(db, 'artifacts', appId, 'public', 'data', 'inquiries');
-            onSnapshot(inqRef, (snap) => {
-                const list = document.getElementById('inquiries-list');
-                document.getElementById('inquiry-count').innerText = `${snap.size} Total`;
-                if (snap.empty) {
-                    list.innerHTML = `<div class="p-12 bg-white rounded-3xl text-center border border-slate-100 text-slate-400 italic">No inquiries yet.</div>`;
-                    return;
-                }
-                list.innerHTML = snap.docs.map(doc => {
-                    const data = doc.data();
-                    return `
-                        <div class="p-6 bg-white rounded-[2rem] border border-slate-100 shadow-sm flex flex-col md:flex-row justify-between gap-4">
+        window.approveReview = async (id) => {
+            try {
+                await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'testimonials', id), { status: 'approved' });
+                showToast("Review Approved and is now Live! ✨");
+            } catch(e) { showToast("Error approving review.", true); }
+        };
+
+        window.deleteReview = async (id) => {
+            if(!confirm("Are you sure you want to delete this review?")) return;
+            try {
+                await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'testimonials', id));
+                showToast("Review Deleted.");
+            } catch(e) { showToast("Error deleting review.", true); }
+        };
+
+        window.deleteInquiry = async (id) => {
+            if(!confirm("Are you sure you want to dismiss this inquiry?")) return;
+            try {
+                await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'inquiries', id));
+                showToast("Inquiry dismissed.");
+            } catch(e) { showToast("Error dismissing inquiry.", true); }
+        };
+
+        function renderLists() {
+            // --- INQUIRIES ---
+            document.getElementById('inquiry-count').innerText = inquiriesList.length;
+            const inquiryHTML = inquiriesList.length === 0
+                ? `<p class="text-sm text-slate-400 italic text-center py-6">No new inquiries yet.</p>`
+                : inquiriesList.map(i => `
+                    <div class="bg-orange-50/40 p-5 rounded-2xl border border-orange-100 flex flex-col gap-3 group">
+                        <div class="flex justify-between items-start">
                             <div>
-                                <div class="flex items-center gap-2 mb-2">
-                                    <h3 class="font-bold text-lg">${data.name}</h3>
-                                    <span class="px-2 py-0.5 bg-pink-50 text-pink-500 text-[10px] font-bold rounded-full">${data.type}</span>
-                                </div>
-                                <p class="text-sm text-slate-500 mb-3">${data.message || 'No message'}</p>
-                                <div class="text-[11px] font-bold text-slate-400 uppercase flex gap-4">
-                                    <span>📞 ${data.phone}</span>
-                                    <span>📍 ${data.area}</span>
-                                </div>
+                                <h4 class="font-bold text-slate-800">${i.name}</h4>
+                                <p class="text-xs text-slate-500 font-bold tracking-wider">${i.phone}</p>
                             </div>
-                            <div class="flex md:flex-col gap-2 justify-center">
-                                <a href="https://wa.me/${data.phone.replace(/\D/g,'')}" target="_blank" class="px-4 py-2 bg-emerald-500 text-white rounded-xl text-xs font-bold text-center">WhatsApp</a>
-                                <button onclick="deleteDocItem('${doc.id}', 'inquiries')" class="px-4 py-2 bg-slate-50 text-slate-400 rounded-xl text-xs font-bold hover:text-rose-500">Remove</button>
-                            </div>
+                            <button onclick="deleteInquiry('${i.id}')" class="text-[10px] uppercase font-bold text-slate-400 hover:text-rose-500 transition px-2 py-1 opacity-0 group-hover:opacity-100">Dismiss</button>
                         </div>
-                    `;
-                }).join('');
-            });
+                        <div class="grid grid-cols-2 gap-4 text-sm text-slate-600 bg-white p-3 rounded-xl border border-orange-50">
+                            <p><strong class="text-slate-400 text-xs uppercase block mb-1">Area</strong> ${i.area}</p>
+                            <p><strong class="text-slate-400 text-xs uppercase block mb-1">Program</strong> ${i.type}</p>
+                        </div>
+                        ${i.message ? `<p class="text-sm text-slate-600 italic bg-white p-4 rounded-xl border border-orange-50">"${i.message}"</p>` : ''}
+                    </div>
+                `).join('');
+            document.getElementById('inquiry-list').innerHTML = inquiryHTML;
 
-            // Testimonials
-            const testRef = collection(db, 'artifacts', appId, 'public', 'data', 'testimonials');
-            onSnapshot(testRef, (snap) => {
-                const list = document.getElementById('testimonial-list');
-                if (snap.empty) {
-                    list.innerHTML = `<div class="p-8 bg-white rounded-3xl text-slate-400 italic">No reviews found.</div>`;
-                    return;
-                }
-                list.innerHTML = snap.docs.map(d => {
-                    const data = d.data();
-                    const isPending = data.status === 'pending';
-                    return `
-                        <div class="bg-white p-6 rounded-2xl border ${isPending ? 'border-amber-100 bg-amber-50/20' : 'border-slate-100'} flex justify-between items-center text-left">
-                            <div>
-                                <div class="flex items-center gap-2 mb-1">
-                                    <span class="font-bold">${data.author}</span>
-                                    ${isPending ? '<span class="text-[9px] bg-amber-100 text-amber-700 px-2 py-0.5 rounded-full font-bold uppercase">Pending</span>' : ''}
-                                </div>
-                                <p class="text-sm text-slate-500 italic">"${data.quote}"</p>
-                            </div>
-                            <div class="flex gap-2">
-                                ${isPending ? `<button onclick="moderateTestimonial('${d.id}', 'approved')" class="px-3 py-1.5 bg-emerald-500 text-white text-[10px] font-bold rounded-lg">Approve</button>` : ''}
-                                <button onclick="deleteDocItem('${d.id}', 'testimonials')" class="px-3 py-1.5 bg-rose-50 text-rose-500 text-[10px] font-bold rounded-lg">Delete</button>
-                            </div>
+            // --- TESTIMONIALS ---
+            const pending = testimonialsList.filter(t => t.status === 'pending');
+            const approved = testimonialsList.filter(t => t.status === 'approved');
+
+            // Update Counts
+            document.getElementById('pending-count').innerText = pending.length;
+            document.getElementById('approved-count').innerText = approved.length;
+
+            // Render Pending
+            const pendingHTML = pending.length === 0 
+                ? `<p class="text-sm text-slate-400 italic text-center py-6">No new reviews pending approval.</p>`
+                : pending.map(t => `
+                    <div class="bg-rose-50/40 p-5 rounded-2xl border border-rose-100 flex flex-col gap-4">
+                        <div>
+                            <p class="text-sm text-slate-700 italic mb-2 leading-relaxed">"${t.quote}"</p>
+                            <p class="text-xs font-bold text-slate-500">— ${t.author}</p>
                         </div>
-                    `;
-                }).join('');
-            });
+                        <div class="flex gap-2 w-full pt-2 border-t border-rose-100">
+                            <button onclick="approveReview('${t.id}')" class="flex-1 px-4 py-2.5 bg-emerald-500 text-white text-xs font-bold rounded-xl shadow-sm hover:bg-emerald-600 transition">Approve</button>
+                            <button onclick="deleteReview('${t.id}')" class="px-4 py-2.5 bg-white border border-slate-200 text-slate-600 text-xs font-bold rounded-xl shadow-sm hover:bg-rose-50 hover:text-rose-600 hover:border-rose-200 transition">Delete</button>
+                        </div>
+                    </div>
+                `).join('');
+            document.getElementById('pending-list').innerHTML = pendingHTML;
+
+            // Render Approved
+            const approvedHTML = approved.length === 0
+                ? `<p class="text-sm text-slate-400 italic text-center py-6">No reviews are currently live.</p>`
+                : approved.map(t => `
+                    <div class="bg-slate-50 p-5 rounded-2xl border border-slate-100 flex flex-col gap-4 group transition hover:border-slate-300">
+                        <div>
+                            <p class="text-sm text-slate-600 italic mb-2 leading-relaxed">"${t.quote}"</p>
+                            <p class="text-xs font-bold text-slate-500">— ${t.author}</p>
+                        </div>
+                        <div class="flex justify-end pt-2 border-t border-slate-200 opacity-0 group-hover:opacity-100 transition">
+                            <button onclick="deleteReview('${t.id}')" class="px-4 py-2 bg-white border border-slate-200 text-slate-500 text-[10px] uppercase tracking-wider font-bold rounded-xl shadow-sm hover:bg-rose-50 hover:text-rose-600 hover:border-rose-200 transition">Remove from Site</button>
+                        </div>
+                    </div>
+                `).join('');
+            document.getElementById('approved-list').innerHTML = approvedHTML;
         }
-
-        window.saveContent = async () => {
-            const data = {
-                heroTitle: document.getElementById('edit-hero-title').value,
-                heroSubtitle: document.getElementById('edit-hero-subtitle').value,
-                teacherName: document.getElementById('edit-teacher-name').value,
-                teacherCreds: document.getElementById('edit-teacher-creds').value,
-                teacherBio: document.getElementById('edit-teacher-bio').value,
-                teacherExperience: document.getElementById('edit-teacher-experience').value
-            };
-            try {
-                await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'content', 'v1'), data);
-                alert("Website content updated! ✨");
-            } catch (err) { alert("Error updating content."); }
-        };
-
-        window.moderateTestimonial = async (id, action) => {
-            try {
-                await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'testimonials', id), { status: action });
-            } catch (err) { console.error(err); }
-        };
-
-        window.deleteDocItem = async (id, collectionName) => {
-            if (!confirm("Delete permanently?")) return;
-            try {
-                await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', collectionName, id));
-            } catch (e) { alert("Error deleting."); }
-        };
     </script>
 </body>
 </html>
