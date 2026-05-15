@@ -405,7 +405,26 @@
                 }
             }
         }
+async function callGemini(userMessage, systemPrompt) {
+    // We combine your instructions with the user's question so the AI knows how to act
+    const fullPrompt = `${systemPrompt}\n\nParent asks: ${userMessage}`;
+    
+    // The official Google Gemini endpoint
+    const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
 
+    const response = await fetch(endpoint, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            contents: [{
+                parts: [{ text: fullPrompt }]
+            }]
+        })
+    });
+
+    const data = await response.json();
         window.askAI = async () => {
             const input = document.getElementById('ai-faq-input');
             const btn = document.getElementById('ask-btn');
