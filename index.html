@@ -64,7 +64,7 @@
             animation: dots 1.5s steps(5, end) infinite;
         }
         @keyframes dots {
-            0%, 20% { color: rgba(0,0,0,0); text-shadow: .25em 0 0 rgba(0,0,0,0), .5em 0 0 rgba(0,0,0,0); }
+            0%, 200% { color: rgba(0,0,0,0); text-shadow: .25em 0 0 rgba(0,0,0,0), .5em 0 0 rgba(0,0,0,0); }
             40% { color: #818cf8; text-shadow: .25em 0 0 rgba(0,0,0,0), .5em 0 0 rgba(0,0,0,0); }
             60% { text-shadow: .25em 0 0 #818cf8, .5em 0 0 rgba(0,0,0,0); }
             80%, 100% { text-shadow: .25em 0 0 #818cf8, .5em 0 0 #818cf8; }
@@ -121,7 +121,7 @@
                     Premium piano and theory lessons by expert instructors in Rawang and PJ areas.
                 </p>
                 <div class="flex flex-col sm:flex-row gap-4 justify-center md:justify-start">
-                    <a href="https://wa.me/60176516750?text=I%20want%20to%20inquiry%20piano%2F%20music%20enrichment%20lessons." target="_blank" class="px-8 py-4 bg-slate-800 text-white rounded-full font-bold shadow-xl transition hover:scale-105 active:scale-95">
+                    <a href="https://wa.me/60176516750?text=I%20want%20to%20inquiry%20piano%2F%20music%20enrichment%20lessons." target="_blank" class="px-8 py-4 bg-slate-800 text-white rounded-full font-bold shadow-xl transition hover:scale-105 active:scale-95 text-center">
                         Book Trial Class Today ✨
                     </a>
                 </div>
@@ -179,7 +179,7 @@
                 <h2 class="text-4xl font-bold text-slate-800 italic">Curated Musical Paths</h2>
             </div>
             <div id="lessons-container" class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-                <!-- Content injected via JS with colors -->
+                <!-- Content injected via JS -->
             </div>
         </div>
     </section>
@@ -190,7 +190,7 @@
             <div class="flex flex-col md:flex-row items-center gap-16">
                 <div class="flex-1">
                     <div class="img-container aspect-[4/5] bg-white relative">
-                        <img src="JPG_Sabrina-25_TU.jpg" onerror="this.src='https://images.unsplash.com/photo-1552058544-f2b08422138a?q=80&w=800'" alt="Sabrina Chai" class="w-full h-full object-cover">
+                        <img src="https://images.unsplash.com/photo-1552058544-f2b08422138a?q=80&w=800" alt="Sabrina Chai" class="w-full h-full object-cover">
                     </div>
                 </div>
                 <div class="flex-1">
@@ -291,7 +291,7 @@
                 </div>
 
                 <div class="bg-white p-8 md:p-10 rounded-[3.5rem] shadow-xl border border-orange-50">
-                    <form onsubmit="handleInquiry(event)" class="space-y-5">
+                    <form id="inquiry-form" onsubmit="handleInquiry(event)" class="space-y-5">
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
                             <input type="text" id="inq-name" placeholder="Name" required class="w-full px-6 py-4 rounded-2xl bg-slate-50 border border-slate-100 outline-none focus:ring-2 focus:ring-orange-400">
                             <input type="tel" id="inq-phone" placeholder="Phone" required class="w-full px-6 py-4 rounded-2xl bg-slate-50 border border-slate-100 outline-none focus:ring-2 focus:ring-orange-400">
@@ -316,7 +316,7 @@
                             </select>
                         </div>
                         <textarea id="inq-msg" rows="4" placeholder="Your Message (Optional)..." class="w-full px-6 py-4 rounded-2xl bg-slate-50 border border-slate-100 outline-none focus:ring-2 focus:ring-orange-400"></textarea>
-                        <button type="submit" class="w-full py-4 bg-gradient-to-r from-orange-400 to-rose-400 text-white rounded-full font-bold shadow-lg hover:opacity-90 transition">Send Inquiry</button>
+                        <button type="submit" id="inquiry-submit-btn" class="w-full py-4 bg-gradient-to-r from-orange-400 to-rose-400 text-white rounded-full font-bold shadow-lg hover:opacity-90 transition">Send Inquiry</button>
                     </form>
                 </div>
             </div>
@@ -331,11 +331,12 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, signInAnonymously, onAuthStateChanged, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, doc, getDoc, setDoc, onSnapshot, collection, addDoc, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getFirestore, doc, getDoc, setDoc, onSnapshot, collection, addDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        const apiKey = ""; // Set your key here
+        // IMPORTANT: Ensure you set an API key here for the AI to work
+        const apiKey = ""; 
         
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'little-haven-v1';
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'little-haven-music-v1';
         let db, auth;
         let isFirebaseActive = false;
         let testimonialsList = [];
@@ -351,9 +352,9 @@
             highlights: ["ABRSM Excellence", "Competition Mentor", "Early Childhood Music Specialist", "100% Distinction and Merit Track"],
             lessons: [
                 { title: "In-Home Piano Lessons", desc: "Personalized ABRSM-focused piano training in the comfort of your own home.", tag: "Practical", color: "bg-rose-50", border: "border-rose-100", tagColor: "text-rose-500" },
-                { title: "In-Home Adult Piano Lessons", desc: "Enjoy playing songs that you are Familiar.", tag: "Practical", color: "bg-amber-50", border: "border-amber-100", tagColor: "text-amber-500" },
+                { title: "In-Home Adult Piano Lessons", desc: "Enjoy playing songs that you are familiar with at your own pace.", tag: "Practical", color: "bg-amber-50", border: "border-amber-100", tagColor: "text-amber-500" },
                 { title: "Piano Virtual Studio", desc: "High-quality, interactive online learning for remote students and young beginners.", tag: "Digital", color: "bg-sky-50", border: "border-sky-100", tagColor: "text-sky-500" },
-                { title: "Music Enrichment Lessons", desc: "Enjoy 45 mins of rhythm playing, percussion exploration, musicianship and building musical senses.", tag: "Discovery", color: "bg-emerald-50", border: "border-emerald-100", tagColor: "text-emerald-500" },
+                { title: "Music Enrichment Lessons", desc: "Enjoy 45 mins of rhythm playing, percussion exploration, and building musical senses.", tag: "Discovery", color: "bg-emerald-50", border: "border-emerald-100", tagColor: "text-emerald-500" },
                 { title: "Music Theory", desc: "Comprehensive ABRSM Grade 1-8 intensive theory programs for strong foundations.", tag: "Academic", color: "bg-indigo-50", border: "border-indigo-100", tagColor: "text-indigo-500" }
             ],
             testimonials: [
@@ -365,10 +366,8 @@
 
         const hideLoading = () => {
             const loader = document.getElementById('loading');
-            if (loader) loader.style.display = 'none';
+            if (loader) loader.classList.add('opacity-0'), setTimeout(() => loader.remove(), 500);
         };
-
-        setTimeout(hideLoading, 3000);
 
         async function callGemini(userMessage, systemPrompt) {
             const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
@@ -380,6 +379,7 @@
                 })
             });
             const data = await response.json();
+            if (data.error) throw new Error(data.error.message);
             return data.candidates?.[0]?.content?.parts?.[0]?.text || "I'm sorry, I couldn't process that.";
         }
 
@@ -392,70 +392,73 @@
 
             if (!apiKey) {
                 area.classList.remove('hidden');
-                area.innerHTML = "<strong>⚠️ Note:</strong> AI Assistant requires a configured API key.";
+                area.innerHTML = "<strong>⚠️ Note:</strong> AI Assistant requires a configured API key. Please contact support to enable this feature.";
                 return;
             }
 
+            btn.disabled = true;
             btn.innerText = "...";
             area.classList.remove('hidden');
             area.innerHTML = "<span class='loading-dots font-bold text-indigo-500'>Assistant is thinking</span>";
 
             try {
-                const res = await callGemini(q, "You are the AI assistant for Little Haven Music Studio, owned by Sabrina Chai. Provide warm, helpful, and concise answers about piano lessons, ABRSM exams, and music theory.");
+                const res = await callGemini(q, "You are the AI assistant for Little Haven Music Studio, owned by Sabrina Chai. Provide warm, helpful, and concise answers about piano lessons, ABRSM exams, and music theory. If you don't know something, ask them to message Sabrina via WhatsApp at +60176516750.");
                 area.innerHTML = `<strong>✨ Assistant:</strong> ${res}`;
             } catch (err) {
-                area.innerHTML = "Sorry, I'm having trouble connecting. Please try again later.";
+                area.innerHTML = "Sorry, I'm having trouble connecting to my musical brain. Please try again or WhatsApp Sabrina directly!";
             } finally {
+                btn.disabled = false;
                 btn.innerText = "Ask ✨";
             }
         };
 
         // --- FIREBASE SYNC ---
-        try {
-            if (typeof __firebase_config !== 'undefined') {
-                const firebaseConfig = JSON.parse(__firebase_config);
-                const app = initializeApp(firebaseConfig);
-                auth = getAuth(app);
-                db = getFirestore(app);
-                isFirebaseActive = true;
+        const setupFirebase = async () => {
+            try {
+                if (typeof __firebase_config !== 'undefined') {
+                    const firebaseConfig = JSON.parse(__firebase_config);
+                    const app = initializeApp(firebaseConfig);
+                    auth = getAuth(app);
+                    db = getFirestore(app);
 
-                const initAuth = async () => {
                     if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
                         await signInWithCustomToken(auth, __initial_auth_token);
                     } else {
                         await signInAnonymously(auth);
                     }
-                };
-                initAuth();
 
-                onAuthStateChanged(auth, (user) => {
-                    if (user) {
-                        const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'content', 'v1');
-                        onSnapshot(docRef, (snap) => {
-                            if (snap.exists()) {
-                                siteData = { ...siteData, ...snap.data() };
-                            } else {
-                                setDoc(docRef, siteData);
-                            }
-                            render();
-                            hideLoading();
-                        }, () => { render(); hideLoading(); });
+                    onAuthStateChanged(auth, (user) => {
+                        if (user) {
+                            isFirebaseActive = true;
+                            // Content Sync
+                            const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'content', 'v1');
+                            onSnapshot(docRef, (snap) => {
+                                if (snap.exists()) siteData = { ...siteData, ...snap.data() };
+                                else setDoc(docRef, siteData);
+                                render();
+                                hideLoading();
+                            }, (err) => { console.error(err); render(); hideLoading(); });
 
-                        const testRef = collection(db, 'artifacts', appId, 'public', 'data', 'testimonials');
-                        onSnapshot(testRef, (snap) => {
-                            testimonialsList = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-                            renderTestimonials();
-                        });
-                    }
-                });
-            } else {
+                            // Testimonials Sync
+                            const testRef = collection(db, 'artifacts', appId, 'public', 'data', 'testimonials');
+                            onSnapshot(testRef, (snap) => {
+                                testimonialsList = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+                                renderTestimonials();
+                            });
+                        }
+                    });
+                } else {
+                    render();
+                    hideLoading();
+                }
+            } catch (e) {
+                console.warn("Firebase failed to init:", e);
                 render();
                 hideLoading();
             }
-        } catch (e) {
-            render();
-            hideLoading();
-        }
+        };
+
+        setupFirebase();
 
         function render() {
             document.getElementById('hero-title').innerText = siteData.heroTitle;
@@ -502,8 +505,15 @@
 
         window.submitTestimonial = async (e) => {
             e.preventDefault();
-            if(!isFirebaseActive) return;
             const btn = document.getElementById('test-submit-btn');
+            
+            if(!isFirebaseActive) {
+                btn.innerText = "Connection Issue - Please Try Later";
+                setTimeout(() => btn.innerText = "Submit Review ✨", 3000);
+                return;
+            }
+
+            btn.disabled = true;
             btn.innerText = "Submitting...";
             try {
                 await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'testimonials'), {
@@ -515,28 +525,50 @@
                 document.getElementById('testimonial-form').reset();
                 window.toggleTestimonialForm();
                 btn.innerText = "Sent! ✨";
-                setTimeout(() => btn.innerText = "Submit Review ✨", 3000);
-            } catch (err) { btn.innerText = "Error. Try again."; }
+                setTimeout(() => { btn.innerText = "Submit Review ✨"; btn.disabled = false; }, 3000);
+            } catch (err) { 
+                btn.innerText = "Error saving. Please try again."; 
+                btn.disabled = false;
+            }
         };
 
         window.handleInquiry = async (e) => {
             e.preventDefault();
-            if(!isFirebaseActive) return;
-            const btn = e.target.querySelector('button[type="submit"]');
+            const btn = document.getElementById('inquiry-submit-btn');
+            const name = document.getElementById('inq-name').value;
+            const area = document.getElementById('inq-area').value;
+            const type = document.getElementById('inq-type').value;
+
+            // Fallback strategy if database is offline
+            const fallbackWhatsApp = () => {
+                const text = encodeURIComponent(`Hi Sabrina! I'm ${name}. I'm interested in ${type} in ${area}.`);
+                window.open(`https://wa.me/60176516750?text=${text}`, '_blank');
+            };
+
+            if(!isFirebaseActive) {
+                btn.innerText = "Redirecting to WhatsApp...";
+                setTimeout(fallbackWhatsApp, 1000);
+                return;
+            }
+
+            btn.disabled = true;
             btn.innerText = "Sending...";
             try {
                 await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'inquiries'), {
-                    name: document.getElementById('inq-name').value,
+                    name,
                     phone: document.getElementById('inq-phone').value,
-                    area: document.getElementById('inq-area').value,
-                    type: document.getElementById('inq-type').value,
+                    area,
+                    type,
                     message: document.getElementById('inq-msg').value,
                     at: new Date()
                 });
                 e.target.reset();
                 btn.innerText = "Inquiry Sent! ✨";
-                setTimeout(() => btn.innerText = "Send Inquiry", 3000);
-            } catch (err) { btn.innerText = "Error. Try WhatsApp."; }
+                setTimeout(() => { btn.innerText = "Send Inquiry"; btn.disabled = false; }, 3000);
+            } catch (err) { 
+                btn.innerText = "Service Busy. WhatsApping...";
+                setTimeout(fallbackWhatsApp, 1500);
+            }
         };
     </script>
 </body>
