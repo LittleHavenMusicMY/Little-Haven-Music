@@ -190,7 +190,7 @@
             <div class="flex flex-col md:flex-row items-center gap-16">
                 <div class="flex-1">
                     <div class="img-container aspect-[4/5] bg-white relative">
-                        <img src="https://images.unsplash.com/photo-1552058544-f2b08422138a?q=80&w=800" alt="Sabrina Chai" class="w-full h-full object-cover">
+                        <img src="Sabrina25.jpg" alt="Sabrina Chai" class="w-full h-full object-cover">
                     </div>
                 </div>
                 <div class="flex-1">
@@ -334,7 +334,7 @@
         import { getFirestore, doc, getDoc, setDoc, onSnapshot, collection, addDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
         // IMPORTANT: Ensure you set an API key here for the AI to work
-        const apiKey = ""; 
+        const apiKey = "AIzaSyD1dNuHzu2qu9kOEGpRB_0Ty5hA1829KN8"; 
         
         const appId = typeof __app_id !== 'undefined' ? __app_id : 'little-haven-music-v1';
         let db, auth;
@@ -345,7 +345,7 @@
         let siteData = {
             heroTitle: "Where Every Note Finds a Home.",
             heroSubtitle: "Premium piano and theory lessons by expert instructors in Rawang and PJ areas.",
-            teacherName: "Ms. Sabrina Chai",
+            teacherName: "Ms. Sabrina",
             teacherCreds: "M.M.Ed., B.A. (Hons) Music • Associate Performance Diploma",
             teacherBio: "With years of dedicated teaching experience, Sabrina specializes in nurturing young talents through the ABRSM curriculum.",
             teacherExperience: "An active contributor to the classical scene, Sabrina brings professional performance insights from her time working with the prestigious <strong>Bachfest Malaysia</strong>.",
@@ -359,8 +359,8 @@
             ],
             testimonials: [
                 { author: "Mrs. Lim", quote: "Sabrina's patience and structured approach helped my daughter achieve Distinction in her ABRSM Grade 5.", status: "approved" },
-                { author: "John D.", quote: "The theory lessons are engaging and easy to understand even for beginners.", status: "approved" },
-                { author: "Sarah W.", quote: "Highly recommend the virtual studio! The tech setup is so clear it feels like she's in the room.", status: "approved" }
+                { author: "John W.", quote: "The theory lessons are engaging and easy to understand even for beginners.", status: "approved" },
+                { author: "Sarah P.", quote: "Highly recommend the virtual studio! The tech setup is so clear it feels like she's in the room.", status: "approved" }
             ]
         };
 
@@ -405,7 +405,7 @@
                 const res = await callGemini(q, "You are the AI assistant for Little Haven Music Studio, owned by Sabrina Chai. Provide warm, helpful, and concise answers about piano lessons, ABRSM exams, and music theory. If you don't know something, ask them to message Sabrina via WhatsApp at +60176516750.");
                 area.innerHTML = `<strong>✨ Assistant:</strong> ${res}`;
             } catch (err) {
-                area.innerHTML = "Sorry, I'm having trouble connecting to my musical brain. Please try again or WhatsApp Sabrina directly!";
+                area.innerHTML = "Sorry, I'm having trouble connecting to my musical brain. Please try again or WhatsApp us directly!";
             } finally {
                 btn.disabled = false;
                 btn.innerText = "Ask ✨";
