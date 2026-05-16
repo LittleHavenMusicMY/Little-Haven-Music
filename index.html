@@ -101,6 +101,7 @@
             <div class="hidden md:flex items-center gap-8 font-bold text-slate-500 text-sm">
                 <a href="#home" class="hover:text-pink-500 transition">Home</a>
                 <a href="#lessons" class="hover:text-emerald-500 transition">Lessons</a>
+                <a href="#about" class="hover:text-amber-500 transition">About Us</a>
                 <a href="#teachers" class="hover:text-purple-500 transition">Teachers</a>
                 <a href="#faq" class="hover:text-indigo-500 transition">FAQ ✨</a>
                 <a href="#contact" class="px-6 py-2 bg-gradient-to-r from-pink-400 to-purple-400 text-white rounded-full shadow-md">Contact</a>
@@ -133,15 +134,52 @@
         </div>
     </section>
 
+    <!-- About Us Section -->
+    <section id="about" class="py-24 px-6 bg-white overflow-hidden relative">
+        <div class="max-w-4xl mx-auto relative z-10">
+            <div class="text-center mb-16">
+                <h4 class="text-amber-500 font-bold uppercase tracking-widest text-sm mb-4">Our Philosophy</h4>
+                <h2 class="text-4xl font-bold text-slate-800 italic">Nurturing Musical Journeys</h2>
+            </div>
+            
+            <div class="space-y-8 text-lg leading-relaxed text-slate-600">
+                <p>
+                    Welcome to <strong>Little Haven Music Studio</strong> — a warm and nurturing space where children can <span class="text-rose-400 font-bold">Love Music</span>, <span class="text-emerald-400 font-bold">Explore Music</span>, and <span class="text-indigo-400 font-bold">Make Music</span>.
+                </p>
+                
+                <p>
+                    We provide engaging and student-centered music lessons designed to inspire creativity, confidence, and joyful learning. Our classes encourage children to discover music naturally through interactive activities, musical exploration, and hands-on experiences in a supportive environment.
+                </p>
+
+                <div class="bg-amber-50 p-10 rounded-[3rem] border border-amber-100 shadow-sm relative">
+                    <svg class="absolute top-6 left-6 w-12 h-12 text-amber-200/50" fill="currentColor" viewBox="0 0 32 32"><path d="M10 8v8H6v6h6v-6h-2V8h2V6H8v2h2zM24 8v8h-4v6h6v-6h-2V8h2V6h-4v2h2z"></path></svg>
+                    <p class="italic text-slate-700 relative z-10">
+                        At Little Haven Music Studio, we believe music education should feel meaningful, enjoyable, and encouraging for every child. Whether they are taking their very first lesson or continuing their musical journey, we aim to help students build strong musical foundations while developing confidence and a genuine love for music.
+                    </p>
+                </div>
+
+                <p>
+                    Through every lesson, we hope to create happy musical experiences that children can grow with for years to come.
+                </p>
+                
+                <div class="text-center pt-8">
+                    <p class="text-2xl font-bold text-slate-800 italic tracking-wide">
+                        Love Music. Explore Music. Make Music.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <!-- Lessons -->
-    <section id="lessons" class="py-24 px-6 bg-white">
+    <section id="lessons" class="py-24 px-6 bg-slate-50/50">
         <div class="max-w-6xl mx-auto">
             <div class="text-center mb-16">
                 <h4 class="text-emerald-500 font-bold uppercase tracking-widest text-sm mb-4">Our Programs</h4>
                 <h2 class="text-4xl font-bold text-slate-800 italic">Curated Musical Paths</h2>
             </div>
-            <div id="lessons-container" class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-                <!-- Content injected via JS -->
+            <div id="lessons-container" class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Content injected via JS with colors -->
             </div>
         </div>
     </section>
@@ -152,7 +190,6 @@
             <div class="flex flex-col md:flex-row items-center gap-16">
                 <div class="flex-1">
                     <div class="img-container aspect-[4/5] bg-white relative">
-                        <!-- Standard fallback if local image fails -->
                         <img src="JPG_Sabrina-25_TU.jpg" onerror="this.src='https://images.unsplash.com/photo-1552058544-f2b08422138a?q=80&w=800'" alt="Sabrina Chai" class="w-full h-full object-cover">
                     </div>
                 </div>
@@ -296,8 +333,7 @@
         import { getAuth, signInAnonymously, onAuthStateChanged, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, doc, getDoc, setDoc, onSnapshot, collection, addDoc, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        // ✨ 1. REPLACE THIS KEY WITH YOUR OWN GEMINI API KEY
-        const apiKey = "AIzaSyD1dNuHzu2qu9kOEGpRB_0Ty5hA1829KN8";
+        const apiKey = ""; // Set your key here
         
         const appId = typeof __app_id !== 'undefined' ? __app_id : 'little-haven-v1';
         let db, auth;
@@ -308,17 +344,17 @@
         let siteData = {
             heroTitle: "Where Every Note Finds a Home.",
             heroSubtitle: "Premium piano and theory lessons by expert instructors in Rawang and PJ areas.",
-            teacherName: "Ms.Sabrina",
+            teacherName: "Ms. Sabrina Chai",
             teacherCreds: "M.M.Ed., B.A. (Hons) Music • Associate Performance Diploma",
             teacherBio: "With years of dedicated teaching experience, Sabrina specializes in nurturing young talents through the ABRSM curriculum.",
             teacherExperience: "An active contributor to the classical scene, Sabrina brings professional performance insights from her time working with the prestigious <strong>Bachfest Malaysia</strong>.",
             highlights: ["ABRSM Excellence", "Competition Mentor", "Early Childhood Music Specialist", "100% Distinction and Merit Track"],
             lessons: [
-                { title: "In-Home Piano Lessons", desc: "Personalized ABRSM-focused piano training in the comfort of your own home.", tag: "Practical" },
-                { title: "In-Home Adult Piano Lessons", desc: "Enjoy playing songs that you are Familiar.", tag: "Practical" },
-                { title: "Piano Virtual Studio", desc: "High-quality, interactive online learning for remote students and young beginners.", tag: "Digital" },
-                { title: "Music Enrichment Lessons", desc: "Enjoy 45 mins of rhythm playing, percussion exploration, musicianship and building musical senses.", tag: "Discovery" },
-                { title: "Music Theory", desc: "Comprehensive ABRSM Grade 1-8 intensive theory programs for strong foundations.", tag: "Academic" }
+                { title: "In-Home Piano Lessons", desc: "Personalized ABRSM-focused piano training in the comfort of your own home.", tag: "Practical", color: "bg-rose-50", border: "border-rose-100", tagColor: "text-rose-500" },
+                { title: "In-Home Adult Piano Lessons", desc: "Enjoy playing songs that you are Familiar.", tag: "Practical", color: "bg-amber-50", border: "border-amber-100", tagColor: "text-amber-500" },
+                { title: "Piano Virtual Studio", desc: "High-quality, interactive online learning for remote students and young beginners.", tag: "Digital", color: "bg-sky-50", border: "border-sky-100", tagColor: "text-sky-500" },
+                { title: "Music Enrichment Lessons", desc: "Enjoy 45 mins of rhythm playing, percussion exploration, musicianship and building musical senses.", tag: "Discovery", color: "bg-emerald-50", border: "border-emerald-100", tagColor: "text-emerald-500" },
+                { title: "Music Theory", desc: "Comprehensive ABRSM Grade 1-8 intensive theory programs for strong foundations.", tag: "Academic", color: "bg-indigo-50", border: "border-indigo-100", tagColor: "text-indigo-500" }
             ],
             testimonials: [
                 { author: "Mrs. Lim", quote: "Sabrina's patience and structured approach helped my daughter achieve Distinction in her ABRSM Grade 5.", status: "approved" },
@@ -327,18 +363,15 @@
             ]
         };
 
-        // UI Helpers
         const hideLoading = () => {
             const loader = document.getElementById('loading');
             if (loader) loader.style.display = 'none';
         };
 
-        // Safety timeout to ensure site shows even if Firebase is slow
         setTimeout(hideLoading, 3000);
 
-        // --- AI FUNCTIONALITY ---
         async function callGemini(userMessage, systemPrompt) {
-            const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
+            const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
             const response = await fetch(endpoint, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
@@ -357,9 +390,9 @@
             const q = input.value.trim();
             if(!q) return;
 
-            if (!apiKey || apiKey.includes("AIzaSyD1dNuHzu2qu9kOEGpRB_0Ty5hA1829KN8")) {
+            if (!apiKey) {
                 area.classList.remove('hidden');
-                area.innerHTML = "<strong>⚠️ Note:</strong> Please add your Gemini API key to the code to enable the AI assistant.";
+                area.innerHTML = "<strong>⚠️ Note:</strong> AI Assistant requires a configured API key.";
                 return;
             }
 
@@ -424,7 +457,6 @@
             hideLoading();
         }
 
-        // --- RENDERING ---
         function render() {
             document.getElementById('hero-title').innerText = siteData.heroTitle;
             document.getElementById('hero-subtitle').innerText = siteData.heroSubtitle;
@@ -441,10 +473,10 @@
             `).join('');
 
             document.getElementById('lessons-container').innerHTML = (siteData.lessons || []).map(l => `
-                <div class="bg-white p-8 rounded-[3rem] border border-slate-100 shadow-sm card-hover">
-                    <span class="px-4 py-1 text-[10px] font-bold uppercase bg-slate-50 text-slate-500 rounded-full mb-4 inline-block">${l.tag}</span>
-                    <h3 class="text-xl font-bold text-slate-800 mb-3">${l.title}</h3>
-                    <p class="text-sm text-slate-500">${l.desc}</p>
+                <div class="${l.color} p-10 rounded-[3rem] border ${l.border} shadow-sm card-hover flex flex-col items-start">
+                    <span class="px-4 py-1 text-[10px] font-bold uppercase bg-white/50 ${l.tagColor} rounded-full mb-6 inline-block">${l.tag}</span>
+                    <h3 class="text-2xl font-bold text-slate-800 mb-4">${l.title}</h3>
+                    <p class="text-slate-600 leading-relaxed">${l.desc}</p>
                 </div>
             `).join('');
             renderTestimonials();
@@ -462,7 +494,6 @@
             `).join('');
         }
 
-        // Window-bound functions for HTML onclicks
         window.toggleTestimonialForm = () => {
             const el = document.getElementById('testimonial-form-container');
             el.classList.toggle('hidden');
